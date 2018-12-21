@@ -33,12 +33,19 @@ export default class Cropper extends Component {
 
   onDragStop(_, data) {
     const { holePositionX, holePositionY } = this.state
+    const { holeSize } = this.props
     const { x, y } = data
-    const picturePositionX = x - holePositionX
-    const picturePositionY = y - holePositionY
+    const picturePositionX = holePositionX - x
+    const picturePositionY = holePositionY - y
     this.setState({
       picturePositionX,
       picturePositionY,
+    })
+    this.props.onChange({
+      x: picturePositionX,
+      y: picturePositionY,
+      width: holeSize,
+      height: holeSize,
     })
   }
 
@@ -74,6 +81,7 @@ export default class Cropper extends Component {
 Cropper.propTypes = {
   src: PropTypes.string.isRequired,
   holeSize: PropTypes.number,
+  onChange: PropTypes.func.isRequired,
 }
 
 Cropper.defaultProps = {
