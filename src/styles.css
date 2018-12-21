@@ -3,6 +3,14 @@
   width: 400px;
   height: 300px;
   overflow: hidden;
+
+  /* prevent user from selecting component like text */
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -o-user-select: none;
+  -moz-user-select: none;
 }
 
 .hole {
