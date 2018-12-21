@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 
-import ExampleComponent from 'react-unicrop'
+import Cropper from 'react-unicrop'
 
 export default class App extends Component {
   render () {
     return (
       <div>
-        <ExampleComponent text='Modern React component module' />
+        <Cropper
+          src={`https://picsum.photos/${Math.floor(Math.random() * 500) + 500}/${Math.floor(Math.random() * 300) + 300}/?random`}
+        />
       </div>
     )
   }

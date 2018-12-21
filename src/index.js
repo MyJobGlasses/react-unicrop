@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 import Draggable from 'react-draggable'
 
 import styles from './styles.css'
@@ -42,6 +42,9 @@ export default class Cropper extends Component {
   }
 
   render() {
+    const {
+      src,
+    } = this.props
     return (
       <div>
         <div
@@ -51,10 +54,14 @@ export default class Cropper extends Component {
           <Draggable
             onStop={this.onDragStop}
           >
-            <img src='https://picsum.photos/500/300/?random' alt='random' draggable={false} />
+            <img src={src} alt='random' draggable={false} />
           </Draggable>
         </div>
       </div>
     )
   }
+}
+
+Cropper.propTypes = {
+  src: PropTypes.string.isRequired,
 }
