@@ -22,11 +22,12 @@ export default class Cropper extends Component {
   componentDidMount() {
     const wrapperHeight = this.wrapperRef.current.clientHeight
     const wrapperWidth = this.wrapperRef.current.clientWidth
+    const { holeSize } = this.props
     this.setState({
       wrapperHeight,
       wrapperWidth,
-      holePositionY: (wrapperHeight - 150) / 2,
-      holePositionX: (wrapperWidth - 150) / 2,
+      holePositionY: (wrapperHeight - holeSize) / 2,
+      holePositionX: (wrapperWidth - holeSize) / 2,
     })
   }
 
@@ -44,6 +45,7 @@ export default class Cropper extends Component {
   render() {
     const {
       src,
+      holeSize,
     } = this.props
     return (
       <div>
@@ -56,6 +58,13 @@ export default class Cropper extends Component {
           >
             <img src={src} alt='random' draggable={false} />
           </Draggable>
+          <div
+            className={styles.hole}
+            style={{
+              width: holeSize,
+              height: holeSize,
+            }}
+          />
         </div>
       </div>
     )
@@ -64,4 +73,9 @@ export default class Cropper extends Component {
 
 Cropper.propTypes = {
   src: PropTypes.string.isRequired,
+  holeSize: PropTypes.number,
+}
+
+Cropper.defaultProps = {
+  holeSize: 150,
 }

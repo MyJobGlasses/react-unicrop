@@ -5,15 +5,13 @@
   overflow: hidden;
 }
 
-.wrapper::after {
+.hole {
   content: '';
   pointer-events: none;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 150px;
-  height: 150px;
   border: 2px solid grey;
   border-radius: 50%;
   box-shadow: 0 0 0 1000px rgba(100, 100, 100, 0.6);
