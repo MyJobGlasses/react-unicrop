@@ -53,6 +53,7 @@ export default class Cropper extends Component {
       this.state.pictureWidth !== pictureWidth
     ) {
       this._calculateDraggableBounds()
+      this.submitChangeToParent()
     }
 
     if (
@@ -130,6 +131,7 @@ export default class Cropper extends Component {
       y: picturePositionY,
       width: holeSize / currentZoom,
       height: holeSize / currentZoom,
+      zoom: currentZoom,
     })
   }
 
