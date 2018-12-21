@@ -112,11 +112,27 @@ export default class Cropper extends Component {
     })
   }
 
-  render() {
+  renderHole() {
+    const { holeSize } = this.props
     const {
-      src,
-      holeSize,
-    } = this.props
+      holePositionX,
+      holePositionY,
+    } = this.state
+    return (
+      <div
+        className={styles.hole}
+        style={{
+          width: holeSize,
+          height: holeSize,
+          top: holePositionY,
+          left: holePositionX,
+        }}
+      />
+    )
+  }
+
+  render() {
+    const { src } = this.props
     const { bounds } = this.state
     return (
       <div>
@@ -136,13 +152,7 @@ export default class Cropper extends Component {
               onLoad={this.onImageLoaded}
             />
           </Draggable>
-          <div
-            className={styles.hole}
-            style={{
-              width: holeSize,
-              height: holeSize,
-            }}
-          />
+          { this.renderHole() }
         </div>
       </div>
     )
