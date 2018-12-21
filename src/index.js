@@ -32,12 +32,12 @@ export default class Cropper extends Component {
   componentDidMount() {
     const wrapperHeight = this.wrapperRef.current.clientHeight
     const wrapperWidth = this.wrapperRef.current.clientWidth
-    const { holeSize } = this.props
+    const { holeSize, holePosition } = this.props
     this.setState({
       wrapperHeight,
       wrapperWidth,
-      holePositionY: (wrapperHeight - holeSize) / 2,
-      holePositionX: (wrapperWidth - holeSize) / 2,
+      holePositionY: (holePosition === 'center' || holePosition.top === 'center') ? (wrapperHeight - holeSize) / 2 : holePosition.top,
+      holePositionX: (holePosition === 'center' || holePosition.left === 'center') ? (wrapperWidth - holeSize) / 2 : holePosition.left,
     })
   }
 
@@ -163,8 +163,22 @@ Cropper.propTypes = {
   src: PropTypes.string.isRequired,
   holeSize: PropTypes.number,
   onChange: PropTypes.func.isRequired,
+  holePosition: PropTypes.oneOfType([
+    PropTypes.oneOf(['center']),
+    PropTypes.shape({
+      top: PropTypes.oneOfType([
+        PropTypes.number.isRequired,
+        PropTypes.oneOf(['center']),
+      ]),
+      left: PropTypes.oneOfType([
+        PropTypes.number.isRequired,
+        PropTypes.oneOf(['center']),
+      ]),
+    }),
+  ]),
 }
 
 Cropper.defaultProps = {
   holeSize: 150,
+  holePosition: 'center',
 }

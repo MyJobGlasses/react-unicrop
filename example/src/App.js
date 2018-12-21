@@ -9,6 +9,10 @@ export default class App extends Component {
         <Cropper
           src={`https://picsum.photos/${Math.floor(Math.random() * 500) + 500}/${Math.floor(Math.random() * 300) + 300}/?random`}
           onChange={console.log}
+          holePosition={{
+            top: 10,
+            left: 'center',
+          }}
         />
       </div>
     )
