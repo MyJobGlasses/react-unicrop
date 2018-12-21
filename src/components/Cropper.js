@@ -36,11 +36,15 @@ export default class Cropper extends Component {
     const wrapperHeight = this.wrapperRef.current.clientHeight
     const wrapperWidth = this.wrapperRef.current.clientWidth
     const { holeSize, holePosition } = this.props
+    const xMarge = (holePosition === 'center' || holePosition.left === 'center') ? (wrapperWidth - holeSize) / 2 : holePosition.left
+    const yMarge = (holePosition === 'center' || holePosition.top === 'center') ? (wrapperHeight - holeSize) / 2 : holePosition.top
     this.setState({
       wrapperHeight,
       wrapperWidth,
-      holePositionY: (holePosition === 'center' || holePosition.top === 'center') ? (wrapperHeight - holeSize) / 2 : holePosition.top,
-      holePositionX: (holePosition === 'center' || holePosition.left === 'center') ? (wrapperWidth - holeSize) / 2 : holePosition.left,
+      holePositionY: yMarge,
+      holePositionX: xMarge,
+      picturePositionX: xMarge,
+      picturePositionY: yMarge,
     })
   }
 
