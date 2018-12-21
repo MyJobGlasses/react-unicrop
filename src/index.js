@@ -210,43 +210,45 @@ export default class Cropper extends Component {
   }
 
   render() {
-    const { src } = this.props
+    const { src, width, height } = this.props
     const { bounds, currentZoom, pictureWidth, pictureHeight } = this.state
     return (
-      <div>
-        <div
-          className={styles.wrapper}
-          ref={this.wrapperRef}
+      <div
+        style={{
+          width,
+          height,
+        }}
+        className={styles.wrapper}
+        ref={this.wrapperRef}
+      >
+        <Draggable
+          onStop={this.onDragStop}
+          bounds={bounds}
+          scale={currentZoom}
         >
-          <Draggable
-            onStop={this.onDragStop}
-            bounds={bounds}
-            scale={currentZoom}
+          <div
+            style={{
+              width: pictureWidth,
+              height: pictureHeight,
+            }}
           >
-            <div
+            <img
+              ref={this.pictureRef}
+              src={src}
+              alt='Image to crop'
+              draggable={false}
+              onLoad={this.onImageLoaded}
               style={{
-                width: pictureWidth,
-                height: pictureHeight,
+                transformOrigin: '0 0',
+                transform: `scale(${currentZoom})`,
               }}
-            >
-              <img
-                ref={this.pictureRef}
-                src={src}
-                alt='Image to crop'
-                draggable={false}
-                onLoad={this.onImageLoaded}
-                style={{
-                  transformOrigin: '0 0',
-                  transform: `scale(${currentZoom})`,
-                }}
-              />
-            </div>
-          </Draggable>
-          { this.renderHole() }
-          <aside className={styles.actions}>
-            { this.renderZoomController() }
-          </aside>
-        </div>
+            />
+          </div>
+        </Draggable>
+        { this.renderHole() }
+        <aside className={styles.actions}>
+          { this.renderZoomController() }
+        </aside>
       </div>
     )
   }
@@ -254,6 +256,8 @@ export default class Cropper extends Component {
 
 Cropper.propTypes = {
   src: PropTypes.string.isRequired,
+  height: PropTypes.number,
+  width: PropTypes.number,
   holeSize: PropTypes.number,
   onChange: PropTypes.func.isRequired,
   holePosition: PropTypes.oneOfType([
@@ -282,4 +286,6 @@ Cropper.defaultProps = {
   zoomMax: 5,
   zoomStep: 0.5,
   enableZoomActions: false,
+  height: 300,
+  width: 500,
 }
