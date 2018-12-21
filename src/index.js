@@ -187,6 +187,10 @@ export default class Cropper extends Component {
    * Render zoom controller
    */
   renderZoomController() {
+    const { enableZoomActions } = this.props
+    if (!enableZoomActions) {
+      return null
+    }
     return (
       <div className={styles.zoomController}>
         <button
@@ -268,6 +272,7 @@ Cropper.propTypes = {
   zoomMin: PropTypes.number,
   zoomMax: PropTypes.number,
   zoomStep: PropTypes.number,
+  enableZoomActions: PropTypes.bool,
 }
 
 Cropper.defaultProps = {
@@ -276,4 +281,5 @@ Cropper.defaultProps = {
   zoomMin: 1,
   zoomMax: 5,
   zoomStep: 0.5,
+  enableZoomActions: false,
 }
