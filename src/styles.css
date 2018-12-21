@@ -12,4 +12,36 @@
   border: 2px solid white;
   border-radius: 50%;
   box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.actions {
+  position: absolute;
+  right: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.zoomController {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.plus,
+.minus {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  padding: 5px;
+  background-color: white;
+  border: 0;
+  font-size: 1rem;
+  text-align: center;
+  transition: background-color ease-in-out 200ms;
+}
+
+.plus:hover,
+.minus:hover {
+  background-color: #D1D1D1;
 }

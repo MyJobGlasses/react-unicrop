@@ -9,6 +9,8 @@ export default class Cropper extends Component {
     super(props)
     this.onDragStop = this.onDragStop.bind(this)
     this.onImageLoaded = this.onImageLoaded.bind(this)
+    this.handleZoomMinus = this.handleZoomMinus.bind(this)
+    this.handleZoomPlus = this.handleZoomPlus.bind(this)
     this.state = {
       wrapperHeight: 0,
       wrapperWidth: 0,
@@ -24,6 +26,7 @@ export default class Cropper extends Component {
         bottom: 10000,
         right: 10000,
       },
+      currentZoom: 1,
     }
     this.wrapperRef = React.createRef()
     this.pictureRef = React.createRef()
@@ -41,7 +44,7 @@ export default class Cropper extends Component {
     })
   }
 
-  componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth }) {
+  componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY }) {
     if (
       this.props.holeSize !== holeSize ||
       this.state.holePositionX !== holePositionX ||
@@ -50,6 +53,14 @@ export default class Cropper extends Component {
       this.state.pictureWidth !== pictureWidth
     ) {
       this._calculateDraggableBounds()
+    }
+
+    if (
+      this.state.picturePositionX !== picturePositionX ||
+      this.state.picturePositionY !== picturePositionY ||
+      this.state.currentZoom !== currentZoom
+    ) {
+      this.submitChangeToParent()
     }
   }
 
@@ -91,24 +102,34 @@ export default class Cropper extends Component {
 
   /**
    * Calculate position on picture (with hole offset)
-   * Call onChange props function to inform parent component
    * @param {Object} event - event data
    * @param {Object} data - draggable data
    */
   onDragStop(_, { x, y }) {
     const { holePositionX, holePositionY } = this.state
-    const { holeSize } = this.props
     const picturePositionX = holePositionX - x
     const picturePositionY = holePositionY - y
     this.setState({
       picturePositionX,
       picturePositionY,
     })
+  }
+
+  /**
+   * Call onChange props to submit changes to parent
+   */
+  submitChangeToParent() {
+    const {
+      picturePositionX,
+      picturePositionY,
+      currentZoom,
+    } = this.state
+    const { holeSize } = this.props
     this.props.onChange({
       x: picturePositionX,
       y: picturePositionY,
-      width: holeSize,
-      height: holeSize,
+      width: holeSize / currentZoom,
+      height: holeSize / currentZoom,
     })
   }
 
@@ -131,9 +152,57 @@ export default class Cropper extends Component {
     )
   }
 
+  /**
+   * Increment current zoom by 0.5
+   * (limited to 5)
+   */
+  handleZoomPlus() {
+    const { currentZoom } = this.state
+    if (currentZoom < 5) {
+      this.setState({
+        currentZoom: currentZoom + 0.5,
+      })
+    }
+  }
+
+  /**
+   * Decrement current zoom by 0.5
+   * (limited to 1)
+   */
+  handleZoomMinus() {
+    const { currentZoom } = this.state
+    if (currentZoom > 1) {
+      this.setState({
+        currentZoom: currentZoom - 0.5,
+      })
+    }
+  }
+
+  /**
+   * Render zoom controller
+   */
+  renderZoomController() {
+    return (
+      <div className={styles.zoomController}>
+        <button
+          className={styles.plus}
+          onClick={this.handleZoomPlus}
+        >
+          +
+        </button>
+        <button
+          className={styles.minus}
+          onClick={this.handleZoomMinus}
+        >
+          -
+        </button>
+      </div>
+    )
+  }
+
   render() {
     const { src } = this.props
-    const { bounds } = this.state
+    const { bounds, currentZoom, pictureWidth, pictureHeight } = this.state
     return (
       <div>
         <div
@@ -143,16 +212,31 @@ export default class Cropper extends Component {
           <Draggable
             onStop={this.onDragStop}
             bounds={bounds}
+            scale={currentZoom}
           >
-            <img
-              ref={this.pictureRef}
-              src={src}
-              alt='Image to crop'
-              draggable={false}
-              onLoad={this.onImageLoaded}
-            />
+            <div
+              style={{
+                width: pictureWidth,
+                height: pictureHeight,
+              }}
+            >
+              <img
+                ref={this.pictureRef}
+                src={src}
+                alt='Image to crop'
+                draggable={false}
+                onLoad={this.onImageLoaded}
+                style={{
+                  transformOrigin: '0 0',
+                  transform: `scale(${currentZoom})`,
+                }}
+              />
+            </div>
           </Draggable>
           { this.renderHole() }
+          <aside className={styles.actions}>
+            { this.renderZoomController() }
+          </aside>
         </div>
       </div>
     )
