@@ -5,12 +5,55 @@ import Draggable from 'react-draggable'
 import styles from './styles.css'
 
 export default class Cropper extends Component {
+  constructor(props) {
+    super(props)
+    this.onDragStop = this.onDragStop.bind(this)
+    this.state = {
+      wrapperHeight: 0,
+      wrapperWidth: 0,
+      holePositionX: 0,
+      holePositionY: 0,
+      picturePositionX: 0,
+      picturePositionY: 0,
+    }
+    this.wrapperRef = React.createRef()
+  }
+
+  componentDidMount() {
+    const wrapperHeight = this.wrapperRef.current.clientHeight
+    const wrapperWidth = this.wrapperRef.current.clientWidth
+    this.setState({
+      wrapperHeight,
+      wrapperWidth,
+      holePositionY: (wrapperHeight - 150) / 2,
+      holePositionX: (wrapperWidth - 150) / 2,
+    })
+  }
+
+  onDragStop(_, data) {
+    const { holePositionX, holePositionY } = this.state
+    const { x, y } = data
+    const picturePositionX = x - holePositionX
+    const picturePositionY = y - holePositionY
+    this.setState({
+      picturePositionX,
+      picturePositionY,
+    })
+  }
+
   render() {
     return (
-      <div className={styles.wrapper}>
-        <Draggable>
-          <img src='https://picsum.photos/500/300/?random' alt='random' draggable={false} />
-        </Draggable>
+      <div>
+        <div
+          className={styles.wrapper}
+          ref={this.wrapperRef}
+        >
+          <Draggable
+            onStop={this.onDragStop}
+          >
+            <img src='https://picsum.photos/500/300/?random' alt='random' draggable={false} />
+          </Draggable>
+        </div>
       </div>
     )
   }
