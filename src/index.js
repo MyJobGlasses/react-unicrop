@@ -133,6 +133,9 @@ export default class Cropper extends Component {
     })
   }
 
+  /**
+   * Render preview hole
+   */
   renderHole() {
     const { holeSize } = this.props
     const {
@@ -154,26 +157,28 @@ export default class Cropper extends Component {
 
   /**
    * Increment current zoom by 0.5
-   * (limited to 5)
+   * (limited to zoomMax props)
    */
   handleZoomPlus() {
+    const { zoomMax, zoomStep } = this.props
     const { currentZoom } = this.state
-    if (currentZoom < 5) {
+    if (currentZoom < zoomMax) {
       this.setState({
-        currentZoom: currentZoom + 0.5,
+        currentZoom: currentZoom + zoomStep,
       })
     }
   }
 
   /**
    * Decrement current zoom by 0.5
-   * (limited to 1)
+   * (limited to zoomMin)
    */
   handleZoomMinus() {
+    const { zoomMin, zoomStep } = this.props
     const { currentZoom } = this.state
-    if (currentZoom > 1) {
+    if (currentZoom > zoomMin) {
       this.setState({
-        currentZoom: currentZoom - 0.5,
+        currentZoom: currentZoom - zoomStep,
       })
     }
   }
@@ -260,9 +265,15 @@ Cropper.propTypes = {
       ]),
     }),
   ]),
+  zoomMin: PropTypes.number,
+  zoomMax: PropTypes.number,
+  zoomStep: PropTypes.number,
 }
 
 Cropper.defaultProps = {
   holeSize: 150,
   holePosition: 'center',
+  zoomMin: 1,
+  zoomMax: 5,
+  zoomStep: 0.5,
 }
