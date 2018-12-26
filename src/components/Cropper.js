@@ -12,6 +12,7 @@ export default class Cropper extends Component {
     this.handleZoomMinus = this.handleZoomMinus.bind(this)
     this.handleZoomPlus = this.handleZoomPlus.bind(this)
     this.handleRotateToRight = this.handleRotateToRight.bind(this)
+    this.handleRotateToLeft = this.handleRotateToLeft.bind(this)
     this.state = {
       wrapperHeight: 0,
       wrapperWidth: 0,
@@ -219,6 +220,10 @@ export default class Cropper extends Component {
     )
   }
 
+  /**
+   * Rotate picture by step of 90deg
+   * (in clockwise)
+   */
   handleRotateToRight() {
     const { currentRotation } = this.state
     let newRotation = currentRotation + 90
@@ -230,6 +235,24 @@ export default class Cropper extends Component {
     })
   }
 
+  /**
+   * Rotate picture by step of 90deg
+   * (in anticlockwise)
+   */
+  handleRotateToLeft() {
+    const { currentRotation } = this.state
+    let newRotation = currentRotation - 90
+    if (newRotation <= -360) {
+      newRotation = 0
+    }
+    this.setState({
+      currentRotation: newRotation,
+    })
+  }
+
+  /**
+   * Handle rotation controls
+   */
   renderRotationController() {
     return (
       <div
@@ -243,6 +266,7 @@ export default class Cropper extends Component {
         </button>
         <button
           className={styles.controllerButton}
+          onClick={this.handleRotateToLeft}
         >
           ⟲
         </button>
@@ -276,6 +300,7 @@ export default class Cropper extends Component {
               width: bounds.right - bounds.left + holeSize,
               height: bounds.bottom - bounds.top + holeSize,
               border: '2px solid red',
+              position: 'relative',
             }}
           >
             <img
@@ -285,8 +310,11 @@ export default class Cropper extends Component {
               draggable={false}
               onLoad={this.onImageLoaded}
               style={{
-                transformOrigin: '50% 50%',
-                transform: `scale(${currentZoom}) rotateZ(${currentRotation}deg)`,
+                transformOrigin: 'center',
+                transform: `translate(-50%, -50%) scale(${currentZoom}) rotateZ(${currentRotation}deg)`,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
               }}
             />
           </div>
