@@ -11,6 +11,7 @@ export default class Cropper extends Component {
     this.onImageLoaded = this.onImageLoaded.bind(this)
     this.handleZoomMinus = this.handleZoomMinus.bind(this)
     this.handleZoomPlus = this.handleZoomPlus.bind(this)
+    this.handleRotateToRight = this.handleRotateToRight.bind(this)
     this.state = {
       wrapperHeight: 0,
       wrapperWidth: 0,
@@ -27,6 +28,7 @@ export default class Cropper extends Component {
         right: 10000,
       },
       currentZoom: 1,
+      currentRotation: 0,
     }
     this.wrapperRef = React.createRef()
     this.pictureRef = React.createRef()
@@ -48,13 +50,14 @@ export default class Cropper extends Component {
     })
   }
 
-  componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY }) {
+  componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY, currentRotation }) {
     if (
       this.props.holeSize !== holeSize ||
       this.state.holePositionX !== holePositionX ||
       this.state.holePositionY !== holePositionY ||
       this.state.pictureHeight !== pictureHeight ||
-      this.state.pictureWidth !== pictureWidth
+      this.state.pictureWidth !== pictureWidth ||
+      this.state.currentRotation !== currentRotation
     ) {
       this._calculateDraggableBounds()
       this.submitChangeToParent()
@@ -91,14 +94,15 @@ export default class Cropper extends Component {
       holePositionY,
       pictureHeight,
       pictureWidth,
+      currentRotation,
     } = this.state
     const {
       holeSize,
     } = this.props
     this.setState({
       bounds: {
-        top: holePositionY + holeSize - pictureHeight,
-        left: holePositionX + holeSize - pictureWidth,
+        top: holePositionY + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth),
+        left: holePositionX + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight),
         bottom: holePositionY,
         right: holePositionX,
       },
@@ -200,13 +204,13 @@ export default class Cropper extends Component {
     return (
       <div className={styles.zoomController}>
         <button
-          className={styles.plus}
+          className={styles.controllerButton}
           onClick={this.handleZoomPlus}
         >
           +
         </button>
         <button
-          className={styles.minus}
+          className={styles.controllerButton}
           onClick={this.handleZoomMinus}
         >
           -
@@ -215,9 +219,44 @@ export default class Cropper extends Component {
     )
   }
 
+  handleRotateToRight() {
+    const { currentRotation } = this.state
+    let newRotation = currentRotation + 90
+    if (newRotation >= 360) {
+      newRotation = 0
+    }
+    this.setState({
+      currentRotation: newRotation,
+    })
+  }
+
+  renderRotationController() {
+    return (
+      <div
+        className={styles.rotationController}
+      >
+        <button
+          className={styles.controllerButton}
+          onClick={this.handleRotateToRight}
+        >
+          ⟳
+        </button>
+        <button
+          className={styles.controllerButton}
+        >
+          ⟲
+        </button>
+      </div>
+    )
+  }
+
   render() {
-    const { src, width, height } = this.props
-    const { bounds, currentZoom, pictureWidth, pictureHeight } = this.state
+    const { src, width, height, holeSize } = this.props
+    const {
+      bounds,
+      currentZoom,
+      currentRotation,
+    } = this.state
     return (
       <div
         style={{
@@ -234,8 +273,9 @@ export default class Cropper extends Component {
         >
           <div
             style={{
-              width: pictureWidth,
-              height: pictureHeight,
+              width: bounds.right - bounds.left + holeSize,
+              height: bounds.bottom - bounds.top + holeSize,
+              border: '2px solid red',
             }}
           >
             <img
@@ -245,8 +285,8 @@ export default class Cropper extends Component {
               draggable={false}
               onLoad={this.onImageLoaded}
               style={{
-                transformOrigin: '0 0',
-                transform: `scale(${currentZoom})`,
+                transformOrigin: '50% 50%',
+                transform: `scale(${currentZoom}) rotateZ(${currentRotation}deg)`,
               }}
             />
           </div>
@@ -254,6 +294,7 @@ export default class Cropper extends Component {
         { this.renderHole() }
         <aside className={styles.actions}>
           { this.renderZoomController() }
+          { this.renderRotationController() }
         </aside>
       </div>
     )
