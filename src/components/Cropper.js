@@ -198,7 +198,12 @@ export default class Cropper extends Component {
    * Render zoom controller
    */
   renderZoomController() {
-    const { enableZoomActions } = this.props
+    const {
+      enableZoomActions,
+      zoomMin,
+      zoomMax,
+    } = this.props
+    const { currentZoom } = this.state
     if (!enableZoomActions) {
       return null
     }
@@ -207,12 +212,14 @@ export default class Cropper extends Component {
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomPlus}
+          disabled={zoomMax <= currentZoom}
         >
           +
         </button>
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomMinus}
+          disabled={zoomMin >= currentZoom}
         >
           -
         </button>
