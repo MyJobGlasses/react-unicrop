@@ -48,8 +48,8 @@ class Preview extends React.PureComponent {
           style={{
             transform: `translate(-${x}px, -${y}px)`,
             position: 'relative',
-            width: (rotation / 90) % 2 === 0 ? pictureWidth : pictureHeight,
-            height: (rotation / 90) % 2 === 0 ? pictureHeight : pictureWidth,
+            width: ((rotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * zoom,
+            height: ((rotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * zoom,
           }}
         >
           <img

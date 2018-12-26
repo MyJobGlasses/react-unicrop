@@ -58,7 +58,8 @@ export default class Cropper extends Component {
       this.state.holePositionY !== holePositionY ||
       this.state.pictureHeight !== pictureHeight ||
       this.state.pictureWidth !== pictureWidth ||
-      this.state.currentRotation !== currentRotation
+      this.state.currentRotation !== currentRotation ||
+      this.state.currentZoom !== currentZoom
     ) {
       this._calculateDraggableBounds()
       this.submitChangeToParent()
@@ -66,8 +67,7 @@ export default class Cropper extends Component {
 
     if (
       this.state.picturePositionX !== picturePositionX ||
-      this.state.picturePositionY !== picturePositionY ||
-      this.state.currentZoom !== currentZoom
+      this.state.picturePositionY !== picturePositionY
     ) {
       this.submitChangeToParent()
     }
@@ -96,14 +96,15 @@ export default class Cropper extends Component {
       pictureHeight,
       pictureWidth,
       currentRotation,
+      currentZoom,
     } = this.state
     const {
       holeSize,
     } = this.props
     this.setState({
       bounds: {
-        top: holePositionY + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth),
-        left: holePositionX + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight),
+        top: holePositionY + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * currentZoom,
+        left: holePositionX + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * currentZoom,
         bottom: holePositionY,
         right: holePositionX,
       },
