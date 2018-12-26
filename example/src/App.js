@@ -12,7 +12,8 @@ export default class App extends Component {
       y: 0,
       width: 0,
       height: 0,
-      zoom: 0,
+      zoom: 1,
+      rotation: 0,
     }
   }
 
@@ -23,6 +24,7 @@ export default class App extends Component {
       width,
       height,
       zoom,
+      rotation,
     } = data
     this.setState({
       x,
@@ -30,6 +32,7 @@ export default class App extends Component {
       width,
       height,
       zoom,
+      rotation,
     })
   }
 
@@ -41,6 +44,7 @@ export default class App extends Component {
       width,
       height,
       zoom,
+      rotation,
     } = this.state
     return (
       <div>
@@ -60,6 +64,7 @@ export default class App extends Component {
           width={width}
           height={height}
           zoom={zoom}
+          rotation={rotation}
         />
       </div>
     )

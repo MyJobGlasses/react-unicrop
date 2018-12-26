@@ -133,6 +133,7 @@ export default class Cropper extends Component {
       picturePositionX,
       picturePositionY,
       currentZoom,
+      currentRotation,
     } = this.state
     const { holeSize } = this.props
     this.props.onChange({
@@ -141,6 +142,7 @@ export default class Cropper extends Component {
       width: holeSize / currentZoom,
       height: holeSize / currentZoom,
       zoom: currentZoom,
+      rotation: currentRotation,
     })
   }
 
