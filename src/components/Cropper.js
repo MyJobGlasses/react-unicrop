@@ -297,10 +297,9 @@ export default class Cropper extends Component {
         >
           <div
             style={{
+              position: 'relative',
               width: bounds.right - bounds.left + holeSize,
               height: bounds.bottom - bounds.top + holeSize,
-              border: '2px solid red',
-              position: 'relative',
             }}
           >
             <img
