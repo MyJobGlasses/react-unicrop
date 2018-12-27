@@ -264,6 +264,10 @@ export default class Cropper extends Component {
    * Handle rotation controls
    */
   renderRotationController() {
+    const { enableRotateActions } = this.props
+    if (!enableRotateActions) {
+      return null
+    }
     return (
       <div
         className={styles.rotationController}
@@ -361,6 +365,7 @@ Cropper.propTypes = {
   zoomMax: PropTypes.number,
   zoomStep: PropTypes.number,
   enableZoomActions: PropTypes.bool,
+  enableRotateActions: PropTypes.bool,
 }
 
 Cropper.defaultProps = {
@@ -372,4 +377,5 @@ Cropper.defaultProps = {
   enableZoomActions: false,
   height: 300,
   width: 500,
+  enableRotateActions: false,
 }

@@ -56,6 +56,7 @@ export default class App extends Component {
             left: 'center',
           }}
           enableZoomActions
+          enableRotateActions
         />
         <Preview
           src={src}
