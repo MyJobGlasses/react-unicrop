@@ -10,10 +10,12 @@ Enzyme.configure({
 describe('#Cropper', () => {
   let component
   let props = {}
+  const onChange = jest.fn()
 
   beforeEach(() => {
     component = mount(<Cropper
       {...props}
+      onChange={onChange}
     />)
   })
 
