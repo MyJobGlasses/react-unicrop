@@ -10,12 +10,14 @@ Enzyme.configure({
 describe('#Cropper', () => {
   let component
   let props = {}
+  let src = 'https://picsum.photos/500/300/?random'
   const onChange = jest.fn()
 
   beforeEach(() => {
     component = mount(<Cropper
       {...props}
       onChange={onChange}
+      src={src}
     />)
   })
 
