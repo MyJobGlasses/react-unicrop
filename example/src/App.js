@@ -7,7 +7,7 @@ export default class App extends Component {
     super(props);
     this.handleCropChange = this.handleCropChange.bind(this)
     this.state = {
-      src: `https://picsum.photos/${Math.floor(Math.random() * 500) + 500}/${Math.floor(Math.random() * 300) + 300}/?random`,
+      src: `https://picsum.photos/300/300/?random`,
       x: 0,
       y: 0,
       width: 0,

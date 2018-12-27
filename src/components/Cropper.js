@@ -77,11 +77,24 @@ export default class Cropper extends Component {
    * Retrieve picture size when loaded
    */
   onImageLoaded() {
+    const { wrapperHeight, wrapperWidth, holePositionX, holePositionY } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
+    let picturePositionX = holePositionX
+    let picturePositionY = holePositionY
+    if (pictureHeight < wrapperHeight) {
+      const margeY = ((wrapperHeight - pictureHeight) / 2)
+      picturePositionY = holePositionY - margeY
+    }
+    if (pictureWidth < wrapperWidth) {
+      const margeX = ((wrapperWidth - pictureWidth) / 2)
+      picturePositionX = holePositionX - margeX
+    }
     this.setState({
       pictureHeight,
       pictureWidth,
+      picturePositionX,
+      picturePositionY,
     })
   }
 
@@ -294,6 +307,10 @@ export default class Cropper extends Component {
       bounds,
       currentZoom,
       currentRotation,
+      picturePositionX,
+      picturePositionY,
+      holePositionX,
+      holePositionY,
     } = this.state
     return (
       <div
@@ -308,6 +325,10 @@ export default class Cropper extends Component {
           onStop={this.onDragStop}
           bounds={bounds}
           scale={currentZoom}
+          position={{
+            x: holePositionX - picturePositionX,
+            y: holePositionY - picturePositionY,
+          }}
         >
           <div
             style={{
