@@ -55,6 +55,7 @@ export default class App extends Component {
             top: 10,
             left: 'center',
           }}
+          width='100%'
           enableZoomActions
           enableRotateActions
         />

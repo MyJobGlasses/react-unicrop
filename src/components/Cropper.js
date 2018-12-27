@@ -35,20 +35,46 @@ export default class Cropper extends Component {
     this.pictureRef = React.createRef()
   }
 
-  componentDidMount() {
-    const wrapperHeight = this.wrapperRef.current.clientHeight
-    const wrapperWidth = this.wrapperRef.current.clientWidth
+  /**
+   * Update wrapper dimentions
+   * + update position of the hole
+   * + update position of the picture
+   */
+  _updateDimentions() {
     const { holeSize, holePosition } = this.props
+    const {
+      picturePositionX,
+      picturePositionY,
+    } = this._calculatePicturePosition()
+    const {
+      picturePositionX: currentPicturePositionX,
+      picturePositionY: currentPicturePositionY,
+    } = this.state
+    const {
+      clientHeight: wrapperHeight,
+      clientWidth: wrapperWidth,
+    } = this.wrapperRef.current
     const xMarge = (holePosition === 'center' || holePosition.left === 'center') ? (wrapperWidth - holeSize) / 2 : holePosition.left
     const yMarge = (holePosition === 'center' || holePosition.top === 'center') ? (wrapperHeight - holeSize) / 2 : holePosition.top
+    const xDiff = picturePositionX - currentPicturePositionX
+    const yDiff = picturePositionY - currentPicturePositionY
     this.setState({
       wrapperHeight,
       wrapperWidth,
       holePositionY: yMarge,
       holePositionX: xMarge,
-      picturePositionX: xMarge,
-      picturePositionY: yMarge,
+      picturePositionY: picturePositionY - yDiff,
+      picturePositionX: picturePositionX - xDiff,
     })
+  }
+
+  componentDidMount() {
+    this._updateDimentions()
+    window.addEventListener('resize', this._updateDimentions.bind(this))
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._updateDimentions.bind(this))
   }
 
   componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY, currentRotation }) {
@@ -74,9 +100,10 @@ export default class Cropper extends Component {
   }
 
   /**
-   * Retrieve picture size when loaded
+   * Use picture height/width to recenter picture
+   * @returns {Object}
    */
-  onImageLoaded() {
+  _calculatePicturePosition() {
     const { wrapperHeight, wrapperWidth, holePositionX, holePositionY } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
@@ -90,6 +117,19 @@ export default class Cropper extends Component {
       const margeX = ((wrapperWidth - pictureWidth) / 2)
       picturePositionX = holePositionX - margeX
     }
+    return {
+      picturePositionX,
+      picturePositionY,
+    }
+  }
+
+  /**
+   * Retrieve picture size when loaded
+   */
+  onImageLoaded() {
+    const pictureHeight = this.pictureRef.current.clientHeight
+    const pictureWidth = this.pictureRef.current.clientWidth
+    const { picturePositionX, picturePositionY } = this._calculatePicturePosition()
     this.setState({
       pictureHeight,
       pictureWidth,
@@ -365,8 +405,14 @@ export default class Cropper extends Component {
 
 Cropper.propTypes = {
   src: PropTypes.string.isRequired,
-  height: PropTypes.number,
-  width: PropTypes.number,
+  height: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
+  width: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
   holeSize: PropTypes.number,
   onChange: PropTypes.func.isRequired,
   holePosition: PropTypes.oneOfType([
