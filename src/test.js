@@ -103,31 +103,83 @@ describe('#Cropper', () => {
     })
   })
 
-  describe('when image load', () => {
-    test('update picture height', () => {})
-    test('update picture width', () => {})
-  })
-
   describe('with zoom actions', () => {
+    let beforeProps = {}
+    beforeAll(() => {
+      beforeProps = {...props}
+      props = {
+        enableZoomActions: true,
+      }
+    })
+    afterAll(() => {
+      props = {...beforeProps}
+    })
+
+    test('display zoom controls', () => {
+      expect(component.text()).toBe('+-')
+    })
+
     describe('when zoom in', () => {
-      test('submit change to parent', () => {})
+      beforeEach(() => {
+        onChange.mockClear()
+        const zoomInButton = component.find('button').at(0)
+        zoomInButton.simulate('click')
+      })
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          zoom: 1.5,
+        }))
+      })
     })
+
     describe('when zoom out', () => {
-      test('submit change to parent', () => {})
+      beforeEach(() => {
+        component.instance().setState({
+          currentZoom: 5,
+        })
+        onChange.mockClear()
+        const zoomInButton = component.find('button').at(1)
+        zoomInButton.simulate('click')
+      })
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          zoom: 4.5,
+        }))
+      })
     })
+
     describe('when zoom in over the max', () => {
-      test('button is disabled', () => {})
+      beforeEach(() => {
+        component.instance().setState({
+          currentZoom: 5,
+        })
+      })
+      test('button is disabled', () => {
+        const zoomInButton = component.update().find('button').at(0)
+        expect(zoomInButton.prop('disabled')).toBe(true)
+      })
     })
+
     describe('when zoom out over the min', () => {
-      test('button is disabled', () => {})
+      beforeEach(() => {
+        component.instance().setState({
+          currentZoom: 1,
+        })
+      })
+      test('button is disabled', () => {
+        const zoomOutButton = component.update().find('button').at(1)
+        expect(zoomOutButton.prop('disabled')).toBe(true)
+      })
     })
   })
 
   describe('with rotation actions', () => {
     describe('when rotate to right', () => {
+      test('recalculate bounds', () => {})
       test('submit change to parent', () => {})
     })
     describe('when rotate to left', () => {
+      test('recalculate bounds', () => {})
       test('submit change to parent', () => {})
     })
   })
