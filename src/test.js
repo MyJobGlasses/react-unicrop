@@ -38,14 +38,35 @@ describe('#Cropper', () => {
         test('calculate hole position', () => {})
       })
     })
+
     describe('when picture position X change', () => {
-      test('submit change to parent', () => {})
+      beforeEach(() => {
+        onChange.mockClear()
+        const draggableComponent = component.find('Draggable')
+        draggableComponent.props().onStop({}, { x: 50, y: 0 })
+      })
+
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          x: 225,
+          y: 75,
+        }))
+      })
     })
+
     describe('when picture position Y change', () => {
-      test('submit change to parent', () => {})
-    })
-    describe('when picture change', () => {
-      test('submit change to parent', () => {})
+      beforeEach(() => {
+        onChange.mockClear()
+        const draggableComponent = component.find('Draggable')
+        draggableComponent.props().onStop({}, { x: 0, y: 50 })
+      })
+
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          x: 275,
+          y: 25,
+        }))
+      })
     })
   })
 
