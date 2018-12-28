@@ -193,13 +193,63 @@ describe('#Cropper', () => {
   })
 
   describe('with rotation actions', () => {
-    describe('when rotate to right', () => {
-      test('recalculate bounds', () => {})
-      test('submit change to parent', () => {})
+    let beforeProps = {}
+    beforeAll(() => {
+      beforeProps = {...props}
+      props = {
+        enableRotateActions: true,
+      }
     })
+    afterAll(() => {
+      props = {...beforeProps}
+    })
+
+    test('display zoom controls', () => {
+      expect(component.text()).toBe('⟳⟲')
+    })
+
+    describe('when rotate to right', () => {
+      beforeEach(() => {
+        const rotateRightButton = component.find('button').at(0)
+        rotateRightButton.simulate('click')
+      })
+
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          rotation: 90,
+        }))
+      })
+
+      test('recalculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: 125,
+          right: 275,
+          top: -475,
+        })
+      })
+    })
+
     describe('when rotate to left', () => {
-      test('recalculate bounds', () => {})
-      test('submit change to parent', () => {})
+      beforeEach(() => {
+        const rotateLeftButton = component.find('button').at(1)
+        rotateLeftButton.simulate('click')
+      })
+
+      test('submit change to parent', () => {
+        expect(onChange).toBeCalledWith(expect.objectContaining({
+          rotation: -90,
+        }))
+      })
+
+      test('recalculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: 125,
+          right: 275,
+          top: -475,
+        })
+      })
     })
   })
 })
