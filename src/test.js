@@ -125,10 +125,20 @@ describe('#Cropper', () => {
         const zoomInButton = component.find('button').at(0)
         zoomInButton.simulate('click')
       })
+
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
           zoom: 1.5,
         }))
+      })
+
+      test('recalculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: -625,
+          right: 275,
+          top: -225,
+        })
       })
     })
 
@@ -145,6 +155,15 @@ describe('#Cropper', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
           zoom: 4.5,
         }))
+      })
+
+      test('recalculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: -2725,
+          right: 275,
+          top: -1125,
+        })
       })
     })
 
