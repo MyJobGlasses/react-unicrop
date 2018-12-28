@@ -19,12 +19,22 @@ describe('#Cropper', () => {
       onChange={onChange}
       src={src}
     />)
+    // due to non-render element size by jsdom
+    // we need to trigger manually feature
+    component.setState({
+      pictureWidth: 700,
+      pictureHeight: 300,
+      wrapperWidth: 400,
+      wrapperHeight: 250,
+      holePositionY: (300 - 150) / 2,
+      holePositionX: (700 - 150) / 2,
+    })
+    component.instance()._calculateDraggableBounds()
   })
 
   describe('hole', () => {
     describe('when component did mount', () => {
       describe('when hole position is center', () => {
-        // @todo mock wrapper height/width
         test('calculate hole position', () => {})
       })
     })
@@ -40,9 +50,57 @@ describe('#Cropper', () => {
   })
 
   describe('hole bounds', () => {
-    describe('when rotate 0deg & zoom x 2', () => {})
-    describe('when rotate 90deg & zoom x 1', () => {})
-    describe('when rotate 90deg & zoom x 2', () => {})
+    describe('when rotate 0deg & zoom x 2', () => {
+      beforeEach(() => {
+        component.setState({
+          currentZoom: 2,
+          currentRotation: 0,
+        })
+      })
+
+      test('correctly calculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: -975,
+          right: 275,
+          top: -375,
+        })
+      })
+    })
+    describe('when rotate 90deg & zoom x 1', () => {
+      beforeEach(() => {
+        component.instance().setState({
+          currentRotation: 90,
+          currentZoom: 1,
+        })
+      })
+
+      test('correctly calculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: 125,
+          right: 275,
+          top: -475,
+        })
+      })
+    })
+    describe('when rotate 90deg & zoom x 2', () => {
+      beforeEach(() => {
+        component.instance().setState({
+          currentRotation: 90,
+          currentZoom: 2,
+        })
+      })
+
+      test('correctly calculate bounds', () => {
+        expect(component.state('bounds')).toMatchObject({
+          bottom: 75,
+          left: -175,
+          right: 275,
+          top: -1175,
+        })
+      })
+    })
   })
 
   describe('when image load', () => {
