@@ -150,6 +150,10 @@ describe('#Cropper', () => {
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
           zoom: 1.5,
+          width: 100,
+          height: 100,
+          x: 0,
+          y: 0,
         }))
       })
 
@@ -159,6 +163,26 @@ describe('#Cropper', () => {
           left: -625,
           right: 275,
           top: -225,
+        })
+      })
+
+      describe('when move position', () => {
+        beforeEach(() => {
+          onChange.mockClear()
+          component.instance().setState({
+            picturePositionX: 100,
+            picturePositionY: 75,
+          })
+        })
+
+        test('submit change to parent', () => {
+          expect(onChange).toBeCalledWith(expect.objectContaining({
+            zoom: 1.5,
+            width: 100,
+            height: 100,
+            x: 100 / 1.5,
+            y: 75 / 1.5,
+          }))
         })
       })
     })
@@ -175,6 +199,10 @@ describe('#Cropper', () => {
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
           zoom: 4.5,
+          width: 150 / 4.5,
+          height: 150 / 4.5,
+          x: 0,
+          y: 0,
         }))
       })
 
@@ -184,6 +212,26 @@ describe('#Cropper', () => {
           left: -2725,
           right: 275,
           top: -1125,
+        })
+      })
+
+      describe('when move position', () => {
+        beforeEach(() => {
+          onChange.mockClear()
+          component.instance().setState({
+            picturePositionX: 100,
+            picturePositionY: 75,
+          })
+        })
+
+        test('submit change to parent', () => {
+          expect(onChange).toBeCalledWith(expect.objectContaining({
+            zoom: 4.5,
+            width: 150 / 4.5,
+            height: 150 / 4.5,
+            x: 100 / 4.5,
+            y: 75 / 4.5,
+          }))
         })
       })
     })

@@ -105,11 +105,17 @@ export default class Cropper extends Component {
    * @returns {Object}
    */
   _calculatePicturePosition() {
-    const { wrapperHeight, wrapperWidth, holePositionX, holePositionY } = this.state
+    const {
+      wrapperHeight,
+      wrapperWidth,
+      holePositionX,
+      holePositionY,
+    } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
     let picturePositionX = holePositionX
     let picturePositionY = holePositionY
+    // calculate position against hole
     if (pictureHeight < wrapperHeight) {
       const margeY = ((wrapperHeight - pictureHeight) / 2)
       picturePositionY = holePositionY - margeY
@@ -190,10 +196,13 @@ export default class Cropper extends Component {
       currentZoom,
       currentRotation,
     } = this.state
-    const { holeSize } = this.props
-    this.props.onChange({
-      x: picturePositionX,
-      y: picturePositionY,
+    const {
+      holeSize,
+      onChange,
+    } = this.props
+    onChange({
+      x: picturePositionX / currentZoom,
+      y: picturePositionY / currentZoom,
       width: holeSize / currentZoom,
       height: holeSize / currentZoom,
       zoom: currentZoom,
