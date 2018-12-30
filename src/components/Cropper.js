@@ -13,6 +13,7 @@ export default class Cropper extends Component {
     this.handleZoomPlus = this.handleZoomPlus.bind(this)
     this.handleRotateToRight = this.handleRotateToRight.bind(this)
     this.handleRotateToLeft = this.handleRotateToLeft.bind(this)
+    this._updateDimentions = this._updateDimentions.bind(this)
     this.state = {
       wrapperHeight: 0,
       wrapperWidth: 0,
@@ -70,11 +71,11 @@ export default class Cropper extends Component {
 
   componentDidMount() {
     this._updateDimentions()
-    window.addEventListener('resize', this._updateDimentions.bind(this))
+    window.addEventListener('resize', this._updateDimentions, false)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this._updateDimentions.bind(this))
+    window.removeEventListener('resize', this._updateDimentions, false)
   }
 
   componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY, currentRotation }) {
