@@ -156,7 +156,7 @@ export default class Cropper extends Component {
    */
   _interpolateWithScale(value, forcedScaleRatio) {
     const { scaleRatio } = this.state
-    return Math.floor(value / (forcedScaleRatio || scaleRatio) * 10) / 10
+    return Math.floor(value / (forcedScaleRatio || scaleRatio) * 100) / 100
   }
 
   /**
@@ -261,6 +261,9 @@ export default class Cropper extends Component {
     return effectiveZoomMin
   }
 
+  /**
+   * Calculate most appropriate step size
+   */
   _getCurrentStepValue() {
     const { zoomStep } = this.props
     const { currentZoom } = this.state
