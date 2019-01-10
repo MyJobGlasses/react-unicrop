@@ -4,7 +4,7 @@ import Draggable from 'react-draggable'
 
 import styles from './Cropper.css'
 
-export default class Cropper extends Component {
+class Cropper extends Component {
   constructor(props) {
     super(props)
     this.onDragStop = this.onDragStop.bind(this)
@@ -66,6 +66,7 @@ export default class Cropper extends Component {
       holePositionX: xMarge,
       picturePositionY: picturePositionY - yDiff,
       picturePositionX: picturePositionX - xDiff,
+      scaleRatio: 1,
     })
   }
 
@@ -102,17 +103,20 @@ export default class Cropper extends Component {
 
   /**
    * Use picture height/width to recenter picture
+   * @param {Number} forcedRatio
    * @returns {Object}
    */
-  _calculatePicturePosition() {
+  _calculatePicturePosition(forcedRatio) {
     const {
       wrapperHeight,
       wrapperWidth,
       holePositionX,
       holePositionY,
+      scaleRatio,
     } = this.state
-    const pictureHeight = this.pictureRef.current.clientHeight
-    const pictureWidth = this.pictureRef.current.clientWidth
+    const ratio = forcedRatio || scaleRatio
+    const pictureHeight = this.pictureRef.current.clientHeight / ratio
+    const pictureWidth = this.pictureRef.current.clientWidth / ratio
     let picturePositionX = holePositionX
     let picturePositionY = holePositionY
     // calculate position against hole
@@ -134,15 +138,36 @@ export default class Cropper extends Component {
    * Retrieve picture size when loaded
    */
   onImageLoaded() {
+    const { wrapperWidth, currentZoom } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
-    const { picturePositionX, picturePositionY } = this._calculatePicturePosition()
+    const scaleRatio = Math.ceil(pictureWidth / wrapperWidth * 10) / 10
+    const { picturePositionX, picturePositionY } = this._calculatePicturePosition(scaleRatio)
     this.setState({
       pictureHeight,
       pictureWidth,
       picturePositionX,
       picturePositionY,
+      scaleRatio,
+      currentZoom: this._interpolateWithScale(currentZoom, scaleRatio),
     })
+  }
+
+  /**
+   * Prevent image to be draggable on Firefox
+   * @param {Object} e
+   */
+  _preventImageDraggableBehavior(e) {
+    e.preventDefault()
+  }
+
+  /**
+   * Process value to handle scale ratio
+   * @param {Number} value
+   */
+  _interpolateWithScale(value, forcedScaleRatio) {
+    const { scaleRatio } = this.state
+    return Math.floor(value / (forcedScaleRatio || scaleRatio) * 100) / 100
   }
 
   /**
@@ -233,29 +258,89 @@ export default class Cropper extends Component {
   }
 
   /**
-   * Increment current zoom by 0.5
+   * Retrieve min zoom based on hole size
+   * @todo refacto to component did update ?
+   */
+  _getMinZoom() {
+    const { zoomMin, holeSize } = this.props
+    const { pictureWidth } = this.state
+    let effectiveZoomMin = zoomMin
+    const maxPictureZoomOut = Math.ceil(holeSize / pictureWidth * 10) / 10
+    if (!zoomMin || zoomMin < maxPictureZoomOut) {
+      effectiveZoomMin = maxPictureZoomOut
+    }
+    return effectiveZoomMin
+  }
+
+  /**
+   * Calculate most appropriate step size
+   */
+  _getCurrentStepValue() {
+    const { zoomStep } = this.props
+    const { currentZoom } = this.state
+    if (currentZoom - zoomStep > 1) {
+      return zoomStep
+    } else if (currentZoom > this._getMinZoom() && (currentZoom - this._interpolateWithScale(0.1)) < this._getMinZoom()) {
+      return currentZoom - this._getMinZoom()
+    } else {
+      return 0.1
+    }
+  }
+
+  /**
+   * Check if passed zoom allow to zoom in
+   * @param {Number} zoom
+   */
+  _canZoomIn(zoom) {
+    const { zoomMax } = this.props
+    return zoom < this._interpolateWithScale(zoomMax)
+  }
+
+  /**
+   * Check if passed zoom allow to zoom out
+   * Prevent from zoom lower than hole
+   * @param {Number} zoom
+   */
+  _canZoomOut(zoom) {
+    return zoom - this._getCurrentStepValue() >= this._getMinZoom()
+  }
+
+  /**
+   * Increment current zoom by zoomStep prop
    * (limited to zoomMax props)
    */
   handleZoomPlus() {
-    const { zoomMax, zoomStep } = this.props
-    const { currentZoom } = this.state
-    if (currentZoom < zoomMax) {
+    const {
+      currentZoom,
+      picturePositionX,
+      picturePositionY,
+    } = this.state
+    if (this._canZoomIn(currentZoom)) {
+      const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
-        currentZoom: currentZoom + zoomStep,
+        currentZoom: newZoom,
+        picturePositionX: (picturePositionX / currentZoom) * newZoom,
+        picturePositionY: (picturePositionY / currentZoom) * newZoom,
       })
     }
   }
 
   /**
-   * Decrement current zoom by 0.5
+   * Decrement current zoom by zoomStep prop
    * (limited to zoomMin)
    */
   handleZoomMinus() {
-    const { zoomMin, zoomStep } = this.props
-    const { currentZoom } = this.state
-    if (currentZoom > zoomMin) {
+    const {
+      currentZoom,
+      picturePositionX,
+      picturePositionY,
+    } = this.state
+    if (this._canZoomOut(currentZoom)) {
+      const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
-        currentZoom: currentZoom - zoomStep,
+        currentZoom: newZoom,
+        picturePositionX: picturePositionX / currentZoom * newZoom,
+        picturePositionY: picturePositionY / currentZoom * newZoom,
       })
     }
   }
@@ -266,8 +351,6 @@ export default class Cropper extends Component {
   renderZoomController() {
     const {
       enableZoomActions,
-      zoomMin,
-      zoomMax,
     } = this.props
     const { currentZoom } = this.state
     if (!enableZoomActions) {
@@ -278,14 +361,14 @@ export default class Cropper extends Component {
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomPlus}
-          disabled={zoomMax <= currentZoom}
+          disabled={!this._canZoomIn(currentZoom)}
         >
           +
         </button>
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomMinus}
-          disabled={zoomMin >= currentZoom}
+          disabled={!this._canZoomOut(currentZoom)}
         >
           -
         </button>
@@ -337,15 +420,15 @@ export default class Cropper extends Component {
       >
         <button
           className={styles.controllerButton}
-          onClick={this.handleRotateToRight}
-        >
-          ⟳
-        </button>
-        <button
-          className={styles.controllerButton}
           onClick={this.handleRotateToLeft}
         >
           ⟲
+        </button>
+        <button
+          className={styles.controllerButton}
+          onClick={this.handleRotateToRight}
+        >
+          ⟳
         </button>
       </div>
     )
@@ -393,6 +476,7 @@ export default class Cropper extends Component {
               alt='Image to crop'
               draggable={false}
               onLoad={this.onImageLoaded}
+              onMouseDown={this._preventImageDraggableBehavior}
               style={{
                 transformOrigin: 'center',
                 transform: `translate(-50%, -50%) scale(${currentZoom}) rotateZ(${currentRotation}deg)`,
@@ -448,7 +532,6 @@ Cropper.propTypes = {
 Cropper.defaultProps = {
   holeSize: 150,
   holePosition: 'center',
-  zoomMin: 1,
   zoomMax: 5,
   zoomStep: 0.5,
   enableZoomActions: false,
@@ -456,3 +539,5 @@ Cropper.defaultProps = {
   width: 500,
   enableRotateActions: false,
 }
+
+export default Cropper

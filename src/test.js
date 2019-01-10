@@ -12,6 +12,8 @@ describe('#Cropper', () => {
   let props = {}
   let src = 'https://picsum.photos/500/300/?random'
   const onChange = jest.fn()
+  // picture width / wrapper width ceil near to 0.1
+  const ratio = Math.ceil(700 / 400 * 10) / 10
 
   beforeEach(() => {
     component = mount(<Cropper
@@ -28,6 +30,7 @@ describe('#Cropper', () => {
       wrapperHeight: 250,
       holePositionY: (300 - 150) / 2,
       holePositionX: (700 - 150) / 2,
+      currentZoom: 1 / ratio,
     })
     component.instance()._calculateDraggableBounds()
   })
@@ -48,8 +51,8 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          x: 225,
-          y: 75,
+          x: 405,
+          y: 135,
         }))
       })
     })
@@ -63,8 +66,8 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          x: 275,
-          y: 25,
+          x: 495,
+          y: 45,
         }))
       })
     })
@@ -149,9 +152,9 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          zoom: 1.5,
-          width: 100,
-          height: 100,
+          zoom: 0.6555555555555556,
+          width: 228.8135593220339,
+          height: 228.8135593220339,
           x: 0,
           y: 0,
         }))
@@ -160,9 +163,9 @@ describe('#Cropper', () => {
       test('recalculate bounds', () => {
         expect(component.state('bounds')).toMatchObject({
           bottom: 75,
-          left: -625,
+          left: -33.888888888888914,
           right: 275,
-          top: -225,
+          top: 28.333333333333343,
         })
       })
 
@@ -177,11 +180,11 @@ describe('#Cropper', () => {
 
         test('submit change to parent', () => {
           expect(onChange).toBeCalledWith(expect.objectContaining({
-            zoom: 1.5,
-            width: 100,
-            height: 100,
-            x: 100 / 1.5,
-            y: 75 / 1.5,
+            zoom: 0.6555555555555556,
+            width: 228.8135593220339,
+            height: 228.8135593220339,
+            x: 152.54237288135593,
+            y: 114.40677966101696,
           }))
         })
       })
@@ -251,7 +254,7 @@ describe('#Cropper', () => {
     describe('when zoom out over the min', () => {
       beforeEach(() => {
         component.instance().setState({
-          currentZoom: 1,
+          currentZoom: Math.ceil(150 / 700 * 10) / 10,
         })
       })
       test('button is disabled', () => {
@@ -274,12 +277,12 @@ describe('#Cropper', () => {
     })
 
     test('display zoom controls', () => {
-      expect(component.text()).toBe('⟳⟲')
+      expect(component.text()).toBe('⟲⟳')
     })
 
     describe('when rotate to right', () => {
       beforeEach(() => {
-        const rotateRightButton = component.find('button').at(0)
+        const rotateRightButton = component.find('button').at(1)
         rotateRightButton.simulate('click')
       })
 
@@ -292,16 +295,16 @@ describe('#Cropper', () => {
       test('recalculate bounds', () => {
         expect(component.state('bounds')).toMatchObject({
           bottom: 75,
-          left: 125,
+          left: 258.3333333333333,
           right: 275,
-          top: -475,
+          top: -163.8888888888889,
         })
       })
     })
 
     describe('when rotate to left', () => {
       beforeEach(() => {
-        const rotateLeftButton = component.find('button').at(1)
+        const rotateLeftButton = component.find('button').at(0)
         rotateLeftButton.simulate('click')
       })
 
@@ -314,9 +317,9 @@ describe('#Cropper', () => {
       test('recalculate bounds', () => {
         expect(component.state('bounds')).toMatchObject({
           bottom: 75,
-          left: 125,
+          left: 258.3333333333333,
           right: 275,
-          top: -475,
+          top: -163.8888888888889,
         })
       })
     })
