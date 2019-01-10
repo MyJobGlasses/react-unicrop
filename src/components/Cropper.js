@@ -4,7 +4,7 @@ import Draggable from 'react-draggable'
 
 import styles from './Cropper.css'
 
-export default class Cropper extends Component {
+class Cropper extends Component {
   constructor(props) {
     super(props)
     this.onDragStop = this.onDragStop.bind(this)
@@ -530,3 +530,5 @@ Cropper.defaultProps = {
   width: 500,
   enableRotateActions: false,
 }
+
+export default Cropper
