@@ -288,7 +288,7 @@ class Cropper extends Component {
   }
 
   /**
-   * Check if passed zoom allow to zoom plus
+   * Check if passed zoom allow to zoom in
    * @param {Number} zoom
    */
   _canZoomIn(zoom) {
@@ -297,7 +297,7 @@ class Cropper extends Component {
   }
 
   /**
-   * Check if passed zoom allow to zoom minus
+   * Check if passed zoom allow to zoom out
    * Prevent from zoom lower than hole
    * @param {Number} zoom
    */
