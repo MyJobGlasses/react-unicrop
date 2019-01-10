@@ -412,15 +412,15 @@ class Cropper extends Component {
       >
         <button
           className={styles.controllerButton}
-          onClick={this.handleRotateToRight}
-        >
-          ⟳
-        </button>
-        <button
-          className={styles.controllerButton}
           onClick={this.handleRotateToLeft}
         >
           ⟲
+        </button>
+        <button
+          className={styles.controllerButton}
+          onClick={this.handleRotateToRight}
+        >
+          ⟳
         </button>
       </div>
     )

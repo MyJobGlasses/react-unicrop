@@ -276,12 +276,12 @@ describe('#Cropper', () => {
     })
 
     test('display zoom controls', () => {
-      expect(component.text()).toBe('⟳⟲')
+      expect(component.text()).toBe('⟲⟳')
     })
 
     describe('when rotate to right', () => {
       beforeEach(() => {
-        const rotateRightButton = component.find('button').at(0)
+        const rotateRightButton = component.find('button').at(1)
         rotateRightButton.simulate('click')
       })
 
@@ -303,7 +303,7 @@ describe('#Cropper', () => {
 
     describe('when rotate to left', () => {
       beforeEach(() => {
-        const rotateLeftButton = component.find('button').at(1)
+        const rotateLeftButton = component.find('button').at(0)
         rotateLeftButton.simulate('click')
       })
 
