@@ -12,6 +12,7 @@ describe('#Cropper', () => {
   let props = {}
   let src = 'https://picsum.photos/500/300/?random'
   const onChange = jest.fn()
+  // picture width / wrapper width ceil near to 0.1
   const ratio = Math.ceil(700 / 400 * 10) / 10
 
   beforeEach(() => {
