@@ -120,7 +120,6 @@ export default class Cropper extends Component {
     let picturePositionX = holePositionX
     let picturePositionY = holePositionY
     // calculate position against hole
-    console.log(pictureHeight, ratio, wrapperHeight)
     if (pictureHeight < wrapperHeight) {
       const margeY = ((wrapperHeight - pictureHeight) / 2)
       picturePositionY = holePositionY - margeY
