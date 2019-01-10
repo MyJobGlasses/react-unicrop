@@ -319,8 +319,8 @@ class Cropper extends Component {
       const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
-        picturePositionX: picturePositionX / currentZoom * newZoom,
-        picturePositionY: picturePositionY / currentZoom * newZoom,
+        picturePositionX: (picturePositionX / currentZoom) * newZoom,
+        picturePositionY: (picturePositionY / currentZoom) * newZoom,
       })
     }
   }
