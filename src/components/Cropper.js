@@ -299,10 +299,17 @@ export default class Cropper extends Component {
    * (limited to zoomMax props)
    */
   handleZoomPlus() {
-    const { currentZoom } = this.state
+    const {
+      currentZoom,
+      picturePositionX,
+      picturePositionY,
+    } = this.state
     if (this._canZoomIn(currentZoom)) {
+      const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
-        currentZoom: currentZoom + this._interpolateWithScale(this._getCurrentStepValue()),
+        currentZoom: newZoom,
+        picturePositionX: picturePositionX / currentZoom * newZoom,
+        picturePositionY: picturePositionY / currentZoom * newZoom,
       })
     }
   }
@@ -312,10 +319,17 @@ export default class Cropper extends Component {
    * (limited to zoomMin)
    */
   handleZoomMinus() {
-    const { currentZoom } = this.state
+    const {
+      currentZoom,
+      picturePositionX,
+      picturePositionY,
+    } = this.state
     if (this._canZoomOut(currentZoom)) {
+      const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
-        currentZoom: currentZoom - this._interpolateWithScale(this._getCurrentStepValue()),
+        currentZoom: newZoom,
+        picturePositionX: picturePositionX / currentZoom * newZoom,
+        picturePositionY: picturePositionY / currentZoom * newZoom,
       })
     }
   }
