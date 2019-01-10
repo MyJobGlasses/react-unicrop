@@ -154,6 +154,14 @@ class Cropper extends Component {
   }
 
   /**
+   * Prevent image to be draggable on Firefox
+   * @param {Object} e
+   */
+  _preventImageDraggableBehavior(e) {
+    e.preventDefault()
+  }
+
+  /**
    * Process value to handle scale ratio
    * @param {Number} value
    */
@@ -468,6 +476,7 @@ class Cropper extends Component {
               alt='Image to crop'
               draggable={false}
               onLoad={this.onImageLoaded}
+              onMouseDown={this._preventImageDraggableBehavior}
               style={{
                 transformOrigin: 'center',
                 transform: `translate(-50%, -50%) scale(${currentZoom}) rotateZ(${currentRotation}deg)`,
