@@ -103,20 +103,24 @@ export default class Cropper extends Component {
 
   /**
    * Use picture height/width to recenter picture
+   * @param {Number} forcedRatio
    * @returns {Object}
    */
-  _calculatePicturePosition() {
+  _calculatePicturePosition(forcedRatio) {
     const {
       wrapperHeight,
       wrapperWidth,
       holePositionX,
       holePositionY,
+      scaleRatio,
     } = this.state
-    const pictureHeight = this.pictureRef.current.clientHeight
-    const pictureWidth = this.pictureRef.current.clientWidth
+    const ratio = forcedRatio || scaleRatio
+    const pictureHeight = this.pictureRef.current.clientHeight / ratio
+    const pictureWidth = this.pictureRef.current.clientWidth / ratio
     let picturePositionX = holePositionX
     let picturePositionY = holePositionY
     // calculate position against hole
+    console.log(pictureHeight, ratio, wrapperHeight)
     if (pictureHeight < wrapperHeight) {
       const margeY = ((wrapperHeight - pictureHeight) / 2)
       picturePositionY = holePositionY - margeY
@@ -138,8 +142,8 @@ export default class Cropper extends Component {
     const { wrapperWidth, currentZoom } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
-    const { picturePositionX, picturePositionY } = this._calculatePicturePosition()
     const scaleRatio = Math.ceil(pictureWidth / wrapperWidth * 10) / 10
+    const { picturePositionX, picturePositionY } = this._calculatePicturePosition(scaleRatio)
     this.setState({
       pictureHeight,
       pictureWidth,
