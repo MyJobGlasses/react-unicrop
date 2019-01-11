@@ -152,9 +152,9 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          zoom: 0.6555555555555556,
-          width: 228.8135593220339,
-          height: 228.8135593220339,
+          zoom: 0.5655555555555556,
+          width: 265.22593320235757,
+          height: 265.22593320235757,
           x: 0,
           y: 0,
         }))
@@ -163,9 +163,9 @@ describe('#Cropper', () => {
       test('recalculate bounds', () => {
         expect(component.state('bounds')).toMatchObject({
           bottom: 75,
-          left: -33.888888888888914,
+          left: 29.111111111111086,
           right: 275,
-          top: 28.333333333333343,
+          top: 55.333333333333314,
         })
       })
 
@@ -180,11 +180,11 @@ describe('#Cropper', () => {
 
         test('submit change to parent', () => {
           expect(onChange).toBeCalledWith(expect.objectContaining({
-            zoom: 0.6555555555555556,
-            width: 228.8135593220339,
-            height: 228.8135593220339,
-            x: 152.54237288135593,
-            y: 114.40677966101696,
+            zoom: 0.5655555555555556,
+            width: 265.22593320235757,
+            height: 265.22593320235757,
+            x: 176.8172888015717,
+            y: 132.61296660117878,
           }))
         })
       })
