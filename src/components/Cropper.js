@@ -90,6 +90,7 @@ class Cropper extends Component {
       this.state.currentRotation !== currentRotation ||
       this.state.currentZoom !== currentZoom
     ) {
+      this._calculateRealZoomMin()
       this._calculateDraggableBounds()
       this.submitChangeToParent()
     }
@@ -99,15 +100,6 @@ class Cropper extends Component {
       this.state.picturePositionY !== picturePositionY
     ) {
       this.submitChangeToParent()
-    }
-
-    if (
-      this.state.pictureWidth !== pictureWidth ||
-      this.state.pictureHeight !== pictureWidth ||
-      this.props.zoomMin !== zoomMin ||
-      this.props.holeSize !== holeSize
-    ) {
-      this._calculateRealZoomMin()
     }
   }
 
