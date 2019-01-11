@@ -141,7 +141,7 @@ class Cropper extends Component {
     const { wrapperWidth, currentZoom } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
-    const scaleRatio = Math.ceil(pictureWidth / wrapperWidth * 10) / 10
+    const scaleRatio = Math.ceil(pictureWidth / wrapperWidth * 100) / 100
     const { picturePositionX, picturePositionY } = this._calculatePicturePosition(scaleRatio)
     this.setState({
       pictureHeight,
@@ -265,7 +265,7 @@ class Cropper extends Component {
     const { zoomMin, holeSize } = this.props
     const { pictureWidth } = this.state
     let effectiveZoomMin = zoomMin
-    const maxPictureZoomOut = Math.ceil(holeSize / pictureWidth * 10) / 10
+    const maxPictureZoomOut = Math.ceil(holeSize / pictureWidth * 100) / 100
     if (!zoomMin || zoomMin < maxPictureZoomOut) {
       effectiveZoomMin = maxPictureZoomOut
     }
@@ -278,7 +278,7 @@ class Cropper extends Component {
   _getCurrentStepValue() {
     const { zoomStep } = this.props
     const { currentZoom } = this.state
-    if (currentZoom - zoomStep > 1) {
+    if (currentZoom - this._interpolateWithScale(zoomStep) > this._interpolateWithScale(1)) {
       return zoomStep
     } else if (currentZoom > this._getMinZoom() && (currentZoom - this._interpolateWithScale(0.1)) < this._getMinZoom()) {
       return currentZoom - this._getMinZoom()
@@ -302,7 +302,7 @@ class Cropper extends Component {
    * @param {Number} zoom
    */
   _canZoomOut(zoom) {
-    return zoom - this._getCurrentStepValue() >= this._getMinZoom()
+    return zoom - this._interpolateWithScale(this._getCurrentStepValue()) >= this._getMinZoom()
   }
 
   /**
