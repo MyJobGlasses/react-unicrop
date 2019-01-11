@@ -31,6 +31,7 @@ class Cropper extends Component {
       },
       currentZoom: 1,
       currentRotation: 0,
+      realZoomMin: props.zoomMin || 0,
     }
     this.wrapperRef = React.createRef()
     this.pictureRef = React.createRef()
@@ -79,7 +80,7 @@ class Cropper extends Component {
     window.removeEventListener('resize', this._updateDimentions, false)
   }
 
-  componentDidUpdate({ holeSize }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY, currentRotation }) {
+  componentDidUpdate({ holeSize, zoomMin }, { holePositionX, holePositionY, pictureHeight, pictureWidth, currentZoom, picturePositionX, picturePositionY, currentRotation }) {
     if (
       this.props.holeSize !== holeSize ||
       this.state.holePositionX !== holePositionX ||
@@ -98,6 +99,15 @@ class Cropper extends Component {
       this.state.picturePositionY !== picturePositionY
     ) {
       this.submitChangeToParent()
+    }
+
+    if (
+      this.state.pictureWidth !== pictureWidth ||
+      this.state.pictureHeight !== pictureWidth ||
+      this.props.zoomMin !== zoomMin ||
+      this.props.holeSize !== holeSize
+    ) {
+      this._calculateRealZoomMin()
     }
   }
 
@@ -141,7 +151,7 @@ class Cropper extends Component {
     const { wrapperWidth, currentZoom } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
-    const scaleRatio = Math.ceil(pictureWidth / wrapperWidth * 100) / 100
+    const scaleRatio = pictureWidth / wrapperWidth
     const { picturePositionX, picturePositionY } = this._calculatePicturePosition(scaleRatio)
     this.setState({
       pictureHeight,
@@ -167,7 +177,7 @@ class Cropper extends Component {
    */
   _interpolateWithScale(value, forcedScaleRatio) {
     const { scaleRatio } = this.state
-    return Math.floor(value / (forcedScaleRatio || scaleRatio) * 100) / 100
+    return value / (forcedScaleRatio || scaleRatio)
   }
 
   /**
@@ -193,6 +203,25 @@ class Cropper extends Component {
         bottom: holePositionY,
         right: holePositionX,
       },
+    })
+  }
+
+  /**
+   * Calculate a zoom min based on holeSize to prevent picture to be out of box
+   */
+  _calculateRealZoomMin() {
+    const { zoomMin, holeSize } = this.props
+    const {
+      pictureWidth,
+      pictureHeight,
+    } = this.state
+    let realZoomMin = zoomMin
+    const maxPictureZoomOut = Math.max(holeSize / pictureWidth, holeSize / pictureHeight)
+    if (!zoomMin || zoomMin < maxPictureZoomOut) {
+      realZoomMin = maxPictureZoomOut
+    }
+    this.setState({
+      realZoomMin,
     })
   }
 
@@ -258,30 +287,18 @@ class Cropper extends Component {
   }
 
   /**
-   * Retrieve min zoom based on hole size
-   * @todo refacto to component did update ?
-   */
-  _getMinZoom() {
-    const { zoomMin, holeSize } = this.props
-    const { pictureWidth } = this.state
-    let effectiveZoomMin = zoomMin
-    const maxPictureZoomOut = Math.ceil(holeSize / pictureWidth * 100) / 100
-    if (!zoomMin || zoomMin < maxPictureZoomOut) {
-      effectiveZoomMin = maxPictureZoomOut
-    }
-    return effectiveZoomMin
-  }
-
-  /**
    * Calculate most appropriate step size
    */
   _getCurrentStepValue() {
     const { zoomStep } = this.props
-    const { currentZoom } = this.state
+    const {
+      currentZoom,
+      realZoomMin,
+    } = this.state
     if (currentZoom - this._interpolateWithScale(zoomStep) > this._interpolateWithScale(1)) {
       return zoomStep
-    } else if (currentZoom > this._getMinZoom() && (currentZoom - this._interpolateWithScale(0.1)) < this._getMinZoom()) {
-      return currentZoom - this._getMinZoom()
+    } else if (currentZoom > realZoomMin && currentZoom - this._interpolateWithScale(0.1) < realZoomMin) {
+      return 0.01
     } else {
       return 0.1
     }
@@ -291,9 +308,10 @@ class Cropper extends Component {
    * Check if passed zoom allow to zoom in
    * @param {Number} zoom
    */
-  _canZoomIn(zoom) {
+  _canZoomIn() {
     const { zoomMax } = this.props
-    return zoom < this._interpolateWithScale(zoomMax)
+    const { currentZoom } = this.state
+    return currentZoom < this._interpolateWithScale(zoomMax)
   }
 
   /**
@@ -301,8 +319,13 @@ class Cropper extends Component {
    * Prevent from zoom lower than hole
    * @param {Number} zoom
    */
-  _canZoomOut(zoom) {
-    return zoom - this._interpolateWithScale(this._getCurrentStepValue()) >= this._getMinZoom()
+  _canZoomOut() {
+    const {
+      realZoomMin,
+      currentZoom,
+    } = this.state
+    console.log(currentZoom, this._interpolateWithScale(this._getCurrentStepValue()), realZoomMin)
+    return currentZoom - this._interpolateWithScale(this._getCurrentStepValue()) >= realZoomMin
   }
 
   /**
@@ -315,7 +338,7 @@ class Cropper extends Component {
       picturePositionX,
       picturePositionY,
     } = this.state
-    if (this._canZoomIn(currentZoom)) {
+    if (this._canZoomIn()) {
       const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
@@ -335,7 +358,7 @@ class Cropper extends Component {
       picturePositionX,
       picturePositionY,
     } = this.state
-    if (this._canZoomOut(currentZoom)) {
+    if (this._canZoomOut()) {
       const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
@@ -352,7 +375,6 @@ class Cropper extends Component {
     const {
       enableZoomActions,
     } = this.props
-    const { currentZoom } = this.state
     if (!enableZoomActions) {
       return null
     }
@@ -361,14 +383,14 @@ class Cropper extends Component {
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomPlus}
-          disabled={!this._canZoomIn(currentZoom)}
+          disabled={!this._canZoomIn()}
         >
           +
         </button>
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomMinus}
-          disabled={!this._canZoomOut(currentZoom)}
+          disabled={!this._canZoomOut()}
         >
           -
         </button>
