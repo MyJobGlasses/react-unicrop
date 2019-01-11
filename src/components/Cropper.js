@@ -324,7 +324,6 @@ class Cropper extends Component {
       realZoomMin,
       currentZoom,
     } = this.state
-    console.log(currentZoom, this._interpolateWithScale(this._getCurrentStepValue()), realZoomMin)
     return currentZoom - this._interpolateWithScale(this._getCurrentStepValue()) >= realZoomMin
   }
 
