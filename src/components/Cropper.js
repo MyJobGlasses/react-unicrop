@@ -365,13 +365,13 @@ class Cropper extends Component {
     picturePositionY = (picturePositionY / currentZoom * newZoom)
 
     // fix picture out of bounds
-    const bottomBoundsPictureMarge = (((newRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
-    if (bottomBoundsPictureMarge < 0) {
-      picturePositionY = picturePositionY + bottomBoundsPictureMarge
+    const bottomBoundsPictureMargin = (((newRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
+    if (bottomBoundsPictureMargin < 0) {
+      picturePositionY = picturePositionY + bottomBoundsPictureMargin
     }
-    const rightBoundsPictureMarge = (((newRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
-    if (rightBoundsPictureMarge < 0) {
-      picturePositionX = picturePositionX + rightBoundsPictureMarge
+    const rightBoundsPictureMargin = (((newRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
+    if (rightBoundsPictureMargin < 0) {
+      picturePositionX = picturePositionX + rightBoundsPictureMargin
     }
 
     return {
