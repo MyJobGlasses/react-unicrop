@@ -340,8 +340,7 @@ class Cropper extends Component {
   }
 
   /**
-   * To prevent picture to be out of the hole
-   * We need to check it to replace picture into the hole
+   * We need to move the picture back into the hole after zooming in/out
    * @param {Number} newZoom
    * @param {Number} newRotation
    */
