@@ -345,7 +345,7 @@ class Cropper extends Component {
    * @param {Number} newZoom
    * @param {Number} newRotation
    */
-  _fixPicturePositionOnZoom(newZoom, newRotation = false) {
+  _adjustPicturePositionOnZoom(newZoom, newRotation = false) {
     let {
       picturePositionX,
       picturePositionY,
@@ -392,7 +392,7 @@ class Cropper extends Component {
       const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
-        ...this._fixPicturePositionOnZoom(newZoom),
+        ...this._adjustPicturePositionOnZoom(newZoom),
       })
     }
   }
@@ -439,7 +439,7 @@ class Cropper extends Component {
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._fixPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
     })
   }
 
@@ -455,7 +455,7 @@ class Cropper extends Component {
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._fixPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
     })
   }
 
