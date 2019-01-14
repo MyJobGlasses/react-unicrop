@@ -190,8 +190,8 @@ class Cropper extends Component {
     } = this.props
     this.setState({
       bounds: {
-        top: holePositionY + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * currentZoom,
-        left: holePositionX + holeSize - ((currentRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * currentZoom,
+        top: holePositionY + holeSize - (this._isLandscape(currentRotation) ? pictureHeight : pictureWidth) * currentZoom,
+        left: holePositionX + holeSize - (this._isLandscape(currentRotation) ? pictureWidth : pictureHeight) * currentZoom,
         bottom: holePositionY,
         right: holePositionX,
       },
@@ -340,6 +340,16 @@ class Cropper extends Component {
   }
 
   /**
+   * Check if current rotation correspond to landscape
+   * true if rotation = 0 or 180
+   * false if rotation = 90 or 270
+   * @param {Number} rotation
+   */
+  _isLandscape(rotation) {
+    return (rotation / 90) % 2 === 0
+  }
+
+  /**
    * We need to move the picture back into the hole after zooming in/out
    * @param {Number} newZoom
    * @param {Number} newRotation
@@ -364,11 +374,11 @@ class Cropper extends Component {
     picturePositionY = (picturePositionY / currentZoom * newZoom)
 
     // fix picture out of bounds
-    const bottomBoundsPictureMargin = (((newRotation / 90) % 2 === 0 ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
+    const bottomBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
     if (bottomBoundsPictureMargin < 0) {
       picturePositionY = picturePositionY + bottomBoundsPictureMargin
     }
-    const rightBoundsPictureMargin = (((newRotation / 90) % 2 === 0 ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
+    const rightBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
     if (rightBoundsPictureMargin < 0) {
       picturePositionX = picturePositionX + rightBoundsPictureMargin
     }
