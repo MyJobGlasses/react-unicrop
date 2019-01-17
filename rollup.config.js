@@ -4,6 +4,7 @@ import external from 'rollup-plugin-peer-deps-external'
 import postcss from 'rollup-plugin-postcss'
 import resolve from 'rollup-plugin-node-resolve'
 import url from 'rollup-plugin-url'
+import reactSvg from 'rollup-plugin-react-svg'
 
 import pkg from './package.json'
 
@@ -12,23 +13,31 @@ export default {
   output: [
     {
       file: pkg.main,
-      format: 'cjs'
+      format: 'cjs',
     },
     {
       file: pkg.module,
-      format: 'es'
-    }
+      format: 'es',
+    },
   ],
   plugins: [
     external(),
     postcss({
-      modules: true
+      modules: true,
+    }),
+    reactSvg({
+      // svgo options
+      svgo: {
+        plugins: [], // passed to svgo
+        multipass: true,
+      },
+      jsx: true,
     }),
     url(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
     resolve(),
-    commonjs()
-  ]
+    commonjs(),
+  ],
 }
