@@ -372,6 +372,7 @@ class Cropper extends Component {
       adjustPositionX = adjustPositionX + rightBoundsPictureMargin
     }
 
+    // prevent out of bounds
     if (adjustPositionX < 0) {
       adjustPositionX = 0
     }
@@ -472,8 +473,8 @@ class Cropper extends Component {
   handleRotateToLeft() {
     const { currentRotation, currentZoom } = this.state
     let newRotation = currentRotation - 90
-    if (newRotation <= -360) {
-      newRotation = 0
+    if (newRotation === -90) {
+      newRotation = 270
     }
     this.setState({
       currentRotation: newRotation,
