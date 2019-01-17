@@ -310,7 +310,9 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          rotation: -90,
+          rotation: 270,
+          x: 0,
+          y: 430,
         }))
       })
 
