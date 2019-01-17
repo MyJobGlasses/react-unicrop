@@ -339,7 +339,7 @@ class Cropper extends Component {
    * @param {Number} newZoom
    * @param {Number} newRotation
    */
-  _adjustPicturePositionOnZoom(newZoom, newRotation = false) {
+  _keepCenteredImageOnActions(newZoom, newRotation = false) {
     let {
       picturePositionX,
       picturePositionY,
@@ -352,33 +352,36 @@ class Cropper extends Component {
       holeSize,
     } = this.props
 
+    let adjustPositionX = picturePositionX
+    let adjustPositionY = picturePositionY
+
     newRotation = newRotation !== false ? newRotation : currentRotation
 
     const holeDiffSize = holeSize - (holeSize / currentZoom * newZoom)
     // Zoom on picture center
-    picturePositionX = (picturePositionX / currentZoom * newZoom) - (holeDiffSize / 2)
-    picturePositionY = (picturePositionY / currentZoom * newZoom) - (holeDiffSize / 2)
+    adjustPositionX = (adjustPositionX / currentZoom * newZoom) - (holeDiffSize / 2)
+    adjustPositionY = (adjustPositionY / currentZoom * newZoom) - (holeDiffSize / 2)
 
     // fix picture out of bounds
-    const bottomBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
+    const bottomBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureHeight : pictureWidth) * newZoom) - adjustPositionY - holeSize
     if (bottomBoundsPictureMargin < 0) {
-      picturePositionY = picturePositionY + bottomBoundsPictureMargin
+      adjustPositionY = adjustPositionY + bottomBoundsPictureMargin
     }
-    const rightBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
+    const rightBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureWidth : pictureHeight) * newZoom) - adjustPositionX - holeSize
     if (rightBoundsPictureMargin < 0) {
-      picturePositionX = picturePositionX + rightBoundsPictureMargin
+      adjustPositionX = adjustPositionX + rightBoundsPictureMargin
     }
 
-    if (picturePositionX < 0) {
-      picturePositionX = 0
+    if (adjustPositionX < 0) {
+      adjustPositionX = 0
     }
-    if (picturePositionY < 0) {
-      picturePositionY = 0
+    if (adjustPositionY < 0) {
+      adjustPositionY = 0
     }
 
     return {
-      picturePositionX,
-      picturePositionY,
+      picturePositionX: adjustPositionX,
+      picturePositionY: adjustPositionY,
     }
   }
 
@@ -394,7 +397,7 @@ class Cropper extends Component {
       const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
-        ...this._adjustPicturePositionOnZoom(newZoom),
+        ...this._keepCenteredImageOnActions(newZoom),
       })
     }
   }
@@ -411,7 +414,7 @@ class Cropper extends Component {
       const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
-        ...this._adjustPicturePositionOnZoom(newZoom),
+        ...this._keepCenteredImageOnActions(newZoom),
       })
     }
   }
@@ -458,7 +461,7 @@ class Cropper extends Component {
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._keepCenteredImageOnActions(currentZoom, newRotation),
     })
   }
 
@@ -474,7 +477,7 @@ class Cropper extends Component {
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._keepCenteredImageOnActions(currentZoom, newRotation),
     })
   }
 
