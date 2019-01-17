@@ -2,6 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Draggable from 'react-draggable'
 
+import RotateRightIcon from '../icons/rotate-right.svg'
+import RotateLeftIcon from '../icons/rotate-left.svg'
+import PlusIcon from '../icons/plus.svg'
+import MinusIcon from '../icons/minus.svg'
+
 import styles from './Cropper.css'
 
 class Cropper extends Component {
@@ -423,14 +428,14 @@ class Cropper extends Component {
           onClick={this.handleZoomPlus}
           disabled={!this._canZoomIn()}
         >
-          +
+          <PlusIcon />
         </button>
         <button
           className={styles.controllerButton}
           onClick={this.handleZoomMinus}
           disabled={!this._canZoomOut()}
         >
-          -
+          <MinusIcon />
         </button>
       </div>
     )
@@ -484,13 +489,13 @@ class Cropper extends Component {
           className={styles.controllerButton}
           onClick={this.handleRotateToLeft}
         >
-          ⟲
+          <RotateLeftIcon />
         </button>
         <button
           className={styles.controllerButton}
           onClick={this.handleRotateToRight}
         >
-          ⟳
+          <RotateRightIcon />
         </button>
       </div>
     )

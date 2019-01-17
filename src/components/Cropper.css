@@ -39,13 +39,18 @@
 .controllerButton {
   cursor: pointer;
   display: block;
-  width: 100%;
+  width: 20px;
+  height: 25px;
   padding: 5px;
+  font-family: sans-serif;
+  text-align: center;
   background-color: white;
   border: 0;
-  font-size: 0.8rem;
-  text-align: center;
   transition: background-color ease-in-out 200ms;
+}
+
+.controllerButton:hover {
+  background-color: #D1D1D1;
 }
 
 .controllerButton:disabled {
@@ -56,6 +61,10 @@
 .controllerButton:focus {
   outline: none;
   box-shadow: inset 0 0 3px grey;
+}
+
+.controllerButton svg {
+  width: 10px;
 }
 
 .plus:hover,
