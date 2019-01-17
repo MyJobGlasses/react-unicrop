@@ -357,8 +357,16 @@ class Cropper extends Component {
 
     newRotation = newRotation !== false ? newRotation : currentRotation
 
-    const holeDiffSize = holeSize - (holeSize / currentZoom * newZoom)
+    if (!(currentRotation === 0 && newRotation === 270) && ((currentRotation === 270 && newRotation === 0) || currentRotation < newRotation)) {
+      adjustPositionY = picturePositionX
+      adjustPositionX = (this._isLandscape(currentRotation) ? pictureHeight : pictureWidth) * newZoom - holeSize - picturePositionY
+    } else if ((currentRotation === 0 && newRotation === 270) || currentRotation > newRotation) {
+      adjustPositionX = picturePositionY
+      adjustPositionY = (this._isLandscape(currentRotation) ? pictureWidth : pictureHeight) * newZoom - holeSize - picturePositionX
+    }
+
     // Zoom on picture center
+    const holeDiffSize = holeSize - (holeSize / currentZoom * newZoom)
     adjustPositionX = (adjustPositionX / currentZoom * newZoom) - (holeDiffSize / 2)
     adjustPositionY = (adjustPositionY / currentZoom * newZoom) - (holeDiffSize / 2)
 
