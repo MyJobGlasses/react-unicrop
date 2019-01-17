@@ -39,7 +39,8 @@
 .controllerButton {
   cursor: pointer;
   display: block;
-  width: 100%;
+  width: 20px;
+  height: 25px;
   padding: 5px;
   font-family: sans-serif;
   text-align: center;
