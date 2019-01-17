@@ -369,6 +369,13 @@ class Cropper extends Component {
       picturePositionX = picturePositionX + rightBoundsPictureMargin
     }
 
+    if (picturePositionX < 0) {
+      picturePositionX = 0
+    }
+    if (picturePositionY < 0) {
+      picturePositionY = 0
+    }
+
     return {
       picturePositionX,
       picturePositionY,
