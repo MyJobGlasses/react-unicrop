@@ -59,6 +59,8 @@ export const removeExifDataFromArrayBuffer = (arrayBuffer) => {
 
 /**
  * Extract EXIF rotation from Blob
+ * @param {Blob} blob
+ * @returns {Promise}
  */
 export const extractExifRotationFromBlob = (blob) => {
   return new Promise(resolve => {
@@ -72,6 +74,7 @@ export const extractExifRotationFromBlob = (blob) => {
 /**
  * Extract EXIF rotation from Array Buffer object
  * @param {ArrayBuffer} arrayBuffer
+ * @url https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side
  */
 export const extractExifRotationFromArrayBuffer = arrayBuffer => {
   return new Promise(resolve => {
