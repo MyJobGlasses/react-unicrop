@@ -140,7 +140,7 @@ describe('#Cropper', () => {
     })
 
     test('display zoom controls', () => {
-      expect(component.text()).toBe('+-')
+      expect(component.find('button')).toHaveLength(2)
     })
 
     describe('when zoom in', () => {
@@ -155,8 +155,8 @@ describe('#Cropper', () => {
           zoom: 0.5655555555555556,
           width: 265.22593320235757,
           height: 265.22593320235757,
-          x: 0,
-          y: 0,
+          x: 2.387033398821233,
+          y: 2.387033398821233,
         }))
       })
 
@@ -277,7 +277,7 @@ describe('#Cropper', () => {
     })
 
     test('display zoom controls', () => {
-      expect(component.text()).toBe('⟲⟳')
+      expect(component.find('button')).toHaveLength(2)
     })
 
     describe('when rotate to right', () => {
@@ -310,7 +310,9 @@ describe('#Cropper', () => {
 
       test('submit change to parent', () => {
         expect(onChange).toBeCalledWith(expect.objectContaining({
-          rotation: -90,
+          rotation: 270,
+          x: 0,
+          y: 430,
         }))
       })
 

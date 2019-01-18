@@ -325,26 +325,6 @@ class Cropper extends Component {
   }
 
   /**
-   * Increment current zoom by zoomStep prop
-   * (limited to zoomMax props)
-   */
-  handleZoomPlus() {
-    const {
-      currentZoom,
-      picturePositionX,
-      picturePositionY,
-    } = this.state
-    if (this._canZoomIn()) {
-      const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
-      this.setState({
-        currentZoom: newZoom,
-        picturePositionX: (picturePositionX / currentZoom) * newZoom,
-        picturePositionY: (picturePositionY / currentZoom) * newZoom,
-      })
-    }
-  }
-
-  /**
    * Check if current rotation correspond to landscape
    * true if rotation = 0 or 180
    * false if rotation = 90 or 270
@@ -359,7 +339,7 @@ class Cropper extends Component {
    * @param {Number} newZoom
    * @param {Number} newRotation
    */
-  _adjustPicturePositionOnZoom(newZoom, newRotation = false) {
+  _keepImageCenteredOnAction(newZoom, newRotation = false) {
     let {
       picturePositionX,
       picturePositionY,
@@ -372,25 +352,64 @@ class Cropper extends Component {
       holeSize,
     } = this.props
 
+    let adjustPositionX = picturePositionX
+    let adjustPositionY = picturePositionY
+
     newRotation = newRotation !== false ? newRotation : currentRotation
 
+    // When rotating image to left
+    if (!(currentRotation === 0 && newRotation === 270) && ((currentRotation === 270 && newRotation === 0) || currentRotation < newRotation)) {
+      adjustPositionY = picturePositionX
+      adjustPositionX = (this._isLandscape(currentRotation) ? pictureHeight : pictureWidth) * newZoom - holeSize - picturePositionY
+    // When rotating image to right
+    } else if ((currentRotation === 0 && newRotation === 270) || currentRotation > newRotation) {
+      adjustPositionX = picturePositionY
+      adjustPositionY = (this._isLandscape(currentRotation) ? pictureWidth : pictureHeight) * newZoom - holeSize - picturePositionX
+    }
+
     // Zoom on picture center
-    picturePositionX = (picturePositionX / currentZoom * newZoom)
-    picturePositionY = (picturePositionY / currentZoom * newZoom)
+    const holeDiffSize = holeSize - (holeSize / currentZoom * newZoom)
+    adjustPositionX = (adjustPositionX / currentZoom * newZoom) - (holeDiffSize / 2)
+    adjustPositionY = (adjustPositionY / currentZoom * newZoom) - (holeDiffSize / 2)
 
     // fix picture out of bounds
-    const bottomBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureHeight : pictureWidth) * newZoom) - picturePositionY - holeSize
+    const bottomBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureHeight : pictureWidth) * newZoom) - adjustPositionY - holeSize
     if (bottomBoundsPictureMargin < 0) {
-      picturePositionY = picturePositionY + bottomBoundsPictureMargin
+      adjustPositionY = adjustPositionY + bottomBoundsPictureMargin
     }
-    const rightBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureWidth : pictureHeight) * newZoom) - picturePositionX - holeSize
+    const rightBoundsPictureMargin = ((this._isLandscape(newRotation) ? pictureWidth : pictureHeight) * newZoom) - adjustPositionX - holeSize
     if (rightBoundsPictureMargin < 0) {
-      picturePositionX = picturePositionX + rightBoundsPictureMargin
+      adjustPositionX = adjustPositionX + rightBoundsPictureMargin
+    }
+
+    // prevent out of bounds
+    if (adjustPositionX < 0) {
+      adjustPositionX = 0
+    }
+    if (adjustPositionY < 0) {
+      adjustPositionY = 0
     }
 
     return {
-      picturePositionX,
-      picturePositionY,
+      picturePositionX: adjustPositionX,
+      picturePositionY: adjustPositionY,
+    }
+  }
+
+  /**
+   * Increment current zoom by zoomStep prop
+   * (limited to zoomMax props)
+   */
+  handleZoomPlus() {
+    const {
+      currentZoom,
+    } = this.state
+    if (this._canZoomIn()) {
+      const newZoom = currentZoom + this._interpolateWithScale(this._getCurrentStepValue())
+      this.setState({
+        currentZoom: newZoom,
+        ...this._keepImageCenteredOnAction(newZoom),
+      })
     }
   }
 
@@ -406,7 +425,7 @@ class Cropper extends Component {
       const newZoom = currentZoom - this._interpolateWithScale(this._getCurrentStepValue())
       this.setState({
         currentZoom: newZoom,
-        ...this._adjustPicturePositionOnZoom(newZoom),
+        ...this._keepImageCenteredOnAction(newZoom),
       })
     }
   }
@@ -453,7 +472,7 @@ class Cropper extends Component {
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._keepImageCenteredOnAction(currentZoom, newRotation),
     })
   }
 
@@ -464,12 +483,12 @@ class Cropper extends Component {
   handleRotateToLeft() {
     const { currentRotation, currentZoom } = this.state
     let newRotation = currentRotation - 90
-    if (newRotation <= -360) {
-      newRotation = 0
+    if (newRotation === -90) {
+      newRotation = 270
     }
     this.setState({
       currentRotation: newRotation,
-      ...this._adjustPicturePositionOnZoom(currentZoom, newRotation),
+      ...this._keepImageCenteredOnAction(currentZoom, newRotation),
     })
   }
 
