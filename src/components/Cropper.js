@@ -357,9 +357,11 @@ class Cropper extends Component {
 
     newRotation = newRotation !== false ? newRotation : currentRotation
 
+    // When rotating image to left
     if (!(currentRotation === 0 && newRotation === 270) && ((currentRotation === 270 && newRotation === 0) || currentRotation < newRotation)) {
       adjustPositionY = picturePositionX
       adjustPositionX = (this._isLandscape(currentRotation) ? pictureHeight : pictureWidth) * newZoom - holeSize - picturePositionY
+    // When rotating image to right
     } else if ((currentRotation === 0 && newRotation === 270) || currentRotation > newRotation) {
       adjustPositionX = picturePositionY
       adjustPositionY = (this._isLandscape(currentRotation) ? pictureWidth : pictureHeight) * newZoom - holeSize - picturePositionX
