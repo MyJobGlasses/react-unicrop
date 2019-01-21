@@ -549,7 +549,6 @@ class Cropper extends Component {
         <Draggable
           onStop={this.onDragStop}
           bounds={bounds}
-          scale={currentZoom}
           position={{
             x: holePositionX - picturePositionX,
             y: holePositionY - picturePositionY,
