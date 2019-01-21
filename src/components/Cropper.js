@@ -147,10 +147,14 @@ class Cropper extends Component {
    */
   onImageLoaded() {
     const { initialPictureRotation } = this.props
-    const { wrapperWidth, currentZoom } = this.state
+    const {
+      wrapperWidth,
+      wrapperHeight,
+      currentZoom,
+    } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
-    const scaleRatio = pictureWidth / wrapperWidth
+    const scaleRatio = Math.max(pictureWidth / wrapperWidth, pictureHeight / wrapperHeight)
     const {
       picturePositionX,
       picturePositionY,
