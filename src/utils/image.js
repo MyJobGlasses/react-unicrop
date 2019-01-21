@@ -1,3 +1,5 @@
+import { rejects } from 'assert';
+
 const { FileReader } = window
 
 /**
@@ -55,6 +57,12 @@ export const removeExifDataFromArrayBuffer = (arrayBuffer) => {
       })
     }
   }
+  const br = new window.Blob([arrayBuffer], { type: 'application/octet-binary' })
+  return new Promise(resolve => {
+    const reader = new window.FileReader()
+    reader.readAsDataURL(br)
+    reader.onload = () => resolve(reader.result)
+  })
 }
 
 /**
