@@ -113,7 +113,7 @@ class Cropper extends Component {
    * @param {Number} forcedRatio
    * @returns {Object}
    */
-  _calculatePicturePosition(forcedRatio) {
+  _calculatePicturePosition(forcedRatio, forcedRotation) {
     const {
       wrapperHeight,
       wrapperWidth,
@@ -122,8 +122,9 @@ class Cropper extends Component {
       scaleRatio,
     } = this.state
     const ratio = forcedRatio || scaleRatio
-    const pictureHeight = this.pictureRef.current.clientHeight / ratio
-    const pictureWidth = this.pictureRef.current.clientWidth / ratio
+    const { clientHeight, clientWidth } = this.pictureRef.current
+    const pictureHeight = (this._isLandscape(forcedRotation) ? clientHeight : clientWidth) / ratio
+    const pictureWidth = (this._isLandscape(forcedRotation) ? clientWidth : clientHeight) / ratio
     let picturePositionX = holePositionX
     let picturePositionY = holePositionY
     // calculate position against hole
@@ -145,17 +146,22 @@ class Cropper extends Component {
    * Retrieve picture size when loaded
    */
   onImageLoaded() {
+    const { initialPictureRotation } = this.props
     const { wrapperWidth, currentZoom } = this.state
     const pictureHeight = this.pictureRef.current.clientHeight
     const pictureWidth = this.pictureRef.current.clientWidth
     const scaleRatio = pictureWidth / wrapperWidth
-    const { picturePositionX, picturePositionY } = this._calculatePicturePosition(scaleRatio)
+    const {
+      picturePositionX,
+      picturePositionY,
+    } = this._calculatePicturePosition(scaleRatio, initialPictureRotation)
     this.setState({
       pictureHeight,
       pictureWidth,
       picturePositionX,
       picturePositionY,
       scaleRatio,
+      currentRotation: initialPictureRotation,
       currentZoom: this._interpolateWithScale(currentZoom, scaleRatio),
     })
   }
@@ -608,6 +614,7 @@ Cropper.propTypes = {
       ]),
     }),
   ]),
+  initialPictureRotation: PropTypes.number,
   zoomMin: PropTypes.number,
   zoomMax: PropTypes.number,
   zoomStep: PropTypes.number,
