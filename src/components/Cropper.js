@@ -137,8 +137,8 @@ class Cropper extends Component {
       picturePositionX = holePositionX - margeX
     }
     return {
-      picturePositionX,
-      picturePositionY,
+      picturePositionX: picturePositionX < 0 ? 0 : picturePositionX,
+      picturePositionY: picturePositionY < 0 ? 0 : picturePositionY,
     }
   }
 
