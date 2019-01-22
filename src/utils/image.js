@@ -52,16 +52,16 @@ export const removeExifDataFromArrayBuffer = (arrayBuffer) => {
       const br = new window.Blob(newPieces, { type: 'image/jpeg' })
       return new Promise(resolve => {
         const reader = new window.FileReader()
-        reader.readAsDataURL(br)
         reader.onload = () => resolve(reader.result)
+        reader.readAsDataURL(br)
       })
     }
   }
   const br = new window.Blob([arrayBuffer], { type: 'application/octet-binary' })
   return new Promise(resolve => {
     const reader = new window.FileReader()
-    reader.readAsDataURL(br)
     reader.onload = () => resolve(reader.result)
+    reader.readAsDataURL(br)
   })
 }
 
